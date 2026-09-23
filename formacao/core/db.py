@@ -21,9 +21,9 @@ class Migration:
     path: Path
 
 
-def connect(db_path: Path) -> sqlite3.Connection:
+def connect(db_path: Path, *, allow_cross_thread: bool = False) -> sqlite3.Connection:
     db_path.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path, check_same_thread=not allow_cross_thread)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     conn.execute("PRAGMA journal_mode = WAL")

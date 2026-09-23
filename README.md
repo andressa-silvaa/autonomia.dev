@@ -9,7 +9,8 @@ Tudo roda local e de graça: Python, SQLite, Docker e Ollama.
 | Fase | Situação |
 |---|---|
 | 0 — Arquitetura mínima | ✅ entregue |
-| 1 — Núcleo de estudos | próxima |
+| 1 — Núcleo de estudos | ✅ entregue |
+| 2 — Diagnóstico e mapa de conhecimento | próxima |
 
 ## Requisitos
 
@@ -36,15 +37,63 @@ formacao db init      # cria data/formacao.db e aplica as migrações
 formacao db status    # versão do schema e linhas por tabela
 ```
 
-`db init` pode ser rodado quantas vezes você quiser: ele só aplica o que estiver pendente.
+`db init` pode ser rodado quantas vezes você quiser: ele só aplica o que estiver pendente. Rode de novo sempre que atualizar o código.
+
+## Estudando
+
+```powershell
+formacao content sync                 # carrega as trilhas de data/ no banco
+formacao checkin                      # "o que você vai estudar hoje?"
+formacao today                        # streak, check-in, sessão e o que estudar agora
+formacao tracks                       # progresso em cada trilha
+formacao track fundamentos-cs         # módulos, status e pré-requisitos
+formacao session start recursao       # cronometra uma sessão (e marca o módulo como "estudando")
+formacao read recursao                # abre o conteúdo no terminal
+formacao session stop -n "o que aprendi"
+formacao done recursao                # conclui o módulo e mostra o que destravou
+```
+
+Um módulo só abre quando todos os pré-requisitos estão concluídos. Os módulos podem ser chamados pelo nome curto (`recursao`) ou pelo nome completo (`fundamentos-cs/recursao`).
+
+## Dashboard
+
+```powershell
+formacao serve --open
+```
+
+O dashboard mostra o streak, o check-in, o tempo de estudo dos últimos 14 dias, o progresso nas trilhas e o conteúdo dos módulos. Ele é só para leitura: registrar sessões e concluir módulos continua no CLI. O tema segue o sistema operacional e pode ser trocado no botão do topo.
+
+Funciona sem internet: o Chart.js está em `dashboard/vendor/`. Sem conexão, só as fontes do Google Fonts deixam de carregar, e o navegador usa as fontes locais de fallback.
+
+## Conteúdo das trilhas
+
+```
+data/
+  catalog.toml              áreas e competências
+  tracks/<trilha>/
+    track.toml              a trilha, seus módulos e pré-requisitos
+    01-modulo.md            teoria em Markdown
+```
+
+Exemplo de módulo no `track.toml`:
+
+```toml
+[[modules]]
+slug = "recursao"
+title = "Recursão"
+summary = "Caso base, pilha de chamadas e memoização."
+content = "07-recursao.md"
+requires = ["memoria-stack-e-heap"]
+competencies = ["recursao"]
+```
+
+- `requires` aceita módulos da mesma trilha (`"recursao"`) ou de outra (`"outra-trilha/modulo"`).
+- `formacao content sync` valida tudo antes de gravar: pré-requisitos inexistentes, ciclos, arquivos faltando, competências desconhecidas. Se algo estiver errado, ele lista todos os problemas e não grava nada.
+- Remover um módulo do arquivo não apaga o seu progresso no banco. O sync só avisa que o módulo ficou órfão.
 
 ## API local
 
-```powershell
-formacao serve
-```
-
-Abra http://127.0.0.1:8000/docs. O endpoint `/health` diz se o banco está em dia.
+Com `formacao serve` rodando, a documentação da API fica em http://127.0.0.1:8000/docs, e o endpoint `/health` diz se o banco está em dia.
 
 ## Containers das trilhas
 
@@ -73,13 +122,20 @@ ruff format .
 formacao/
   core/          banco, migrações, entidades do domínio
     migrations/  arquivos NNNN_descricao.sql, aplicados em ordem
-  engines/       engines da arquitetura (criados fase a fase)
+    workspace.py abre banco + usuária para CLI e API
+  engines/
+    content.py   leitura, validação e sync de data/
+    progress.py  status dos módulos e trava de pré-requisitos
+    sessions.py  sessões de estudo
+    checkins.py  check-in diário e streak
+    overview.py  resumo do dia (base do dashboard)
   cli/           comandos do terminal (typer + rich)
-  api/           API local (FastAPI)
+  api/           API local (FastAPI) e tokens de tema
+  voice.py       textos com a voz do sistema e erros como "Desafio"
   ui_palette.py  cores da marca, compartilhadas entre CLI e dashboard
-data/tracks/     conteúdo das trilhas (Markdown)
+data/            catálogo e trilhas (TOML + Markdown)
 exercises/       exercícios executáveis
-dashboard/       dashboard HTML (Fase 1)
+dashboard/       dashboard HTML + JS puro + Chart.js
 docker/          compose dos serviços reais das trilhas
 scripts/         scripts de agendamento (briefing, check-in)
 docs/adr/        registro das decisões de arquitetura
@@ -96,7 +152,7 @@ As regras estão na skill `.claude/skills/code-style/SKILL.md`:
 
 ## Como criar uma migração
 
-1. Crie `formacao/core/migrations/0002_descricao.sql`, com o próximo número da sequência.
+1. Crie `formacao/core/migrations/0003_descricao.sql`, com o próximo número da sequência.
 2. Não use `BEGIN`/`COMMIT`: o executor já roda o arquivo inteiro numa transação.
 3. Nunca edite uma migração que já foi aplicada; crie uma nova.
 4. Rode `formacao db init`.
@@ -104,4 +160,4 @@ As regras estão na skill `.claude/skills/code-style/SKILL.md`:
 ## Ainda não coberto (fases futuras)
 
 - **Ollama**: instalação e modelos (`qwen2.5-coder`, `llama3.2`, `phi3`) serão documentados quando a correção por IA entrar.
-- **Agendamento (Agendador de Tarefas do Windows)**: o briefing diário e o lembrete de check-in chegam com as Fases 1 e 10. Ficarão em `scripts/`, com um script que registra as tarefas via `schtasks`.
+- **Agendamento (Agendador de Tarefas do Windows)**: o lembrete de check-in e o briefing diário vão ficar em `scripts/`, com um script que registra as tarefas via `schtasks`. Entram junto com o hook de pre-push (Fase 3) e o Tech Knowledge Hub (Fase 10).

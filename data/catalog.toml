@@ -1,0 +1,142 @@
+[[areas]]
+slug = "fundamentos"
+name = "Fundamentos de computação"
+description = "Como o computador funciona, estruturas de dados e algoritmos."
+
+[[areas]]
+slug = "backend"
+name = "Backend"
+description = "APIs, regras de negócio, persistência e integração entre sistemas."
+
+[[areas]]
+slug = "frontend"
+name = "Frontend"
+description = "Interfaces web, componentes, estado e acessibilidade."
+
+[[areas]]
+slug = "mobile"
+name = "Mobile"
+description = "Aplicativos para Android e iOS."
+
+[[areas]]
+slug = "banco-de-dados"
+name = "Bancos de dados"
+description = "Modelagem, SQL, NoSQL, índices, transações e cache."
+
+[[areas]]
+slug = "cloud"
+name = "Cloud"
+description = "Serviços gerenciados, custos, rede e segurança em nuvem."
+
+[[areas]]
+slug = "infra"
+name = "Infraestrutura"
+description = "Containers, servidores, rede e provisionamento."
+
+[[areas]]
+slug = "devops"
+name = "DevOps"
+description = "CI/CD, automação, entrega contínua e cultura de operação."
+
+[[areas]]
+slug = "arquitetura"
+name = "Arquitetura de software"
+description = "Organização de código, padrões, camadas e decisões de design."
+
+[[areas]]
+slug = "system-design"
+name = "System design"
+description = "Sistemas distribuídos, escala, consistência e trade-offs."
+
+[[areas]]
+slug = "seguranca"
+name = "Segurança"
+description = "Ameaças, autenticação, autorização e desenvolvimento seguro."
+
+[[areas]]
+slug = "ia-ml"
+name = "IA e machine learning"
+description = "Modelos, treino, avaliação e uso responsável."
+
+[[areas]]
+slug = "llms-agentes"
+name = "LLMs e agentes"
+description = "Prompting, RAG, tool calling, MCP, agentes e avaliação."
+
+[[areas]]
+slug = "dados"
+name = "Dados"
+description = "Pipelines, modelagem analítica e processamento de dados."
+
+[[areas]]
+slug = "testes"
+name = "Testes"
+description = "Testes unitários, de integração, end-to-end e estratégia de testes."
+
+[[areas]]
+slug = "observabilidade"
+name = "Observabilidade"
+description = "Logs, métricas, traces e resposta a incidentes."
+
+[[areas]]
+slug = "git"
+name = "Git"
+description = "Versionamento, branches, histórico e colaboração."
+
+[[areas]]
+slug = "so-redes"
+name = "Sistemas operacionais e redes"
+description = "Processos, memória, arquivos, TCP/IP, HTTP e DNS."
+
+[[areas]]
+slug = "comunicacao-tecnica"
+name = "Comunicação técnica"
+description = "Documentação, ADRs, RFCs, PRs e apresentação de decisões."
+
+[[competencies]]
+slug = "execucao-de-programas"
+area = "fundamentos"
+name = "Execução de programas"
+description = "Explicar o caminho do código-fonte até a CPU."
+
+[[competencies]]
+slug = "representacao-de-dados"
+area = "fundamentos"
+name = "Representação de dados"
+description = "Binário, hexadecimal, inteiros, ponto flutuante e texto."
+
+[[competencies]]
+slug = "modelo-de-memoria"
+area = "fundamentos"
+name = "Modelo de memória"
+description = "Stack, heap, valor versus referência e garbage collector."
+
+[[competencies]]
+slug = "analise-de-complexidade"
+area = "fundamentos"
+name = "Análise de complexidade"
+description = "Estimar tempo e espaço de um algoritmo com Big-O."
+
+[[competencies]]
+slug = "estruturas-lineares"
+area = "fundamentos"
+name = "Estruturas lineares"
+description = "Arrays, listas, pilhas e filas: quando usar cada uma."
+
+[[competencies]]
+slug = "tabelas-hash"
+area = "fundamentos"
+name = "Tabelas hash"
+description = "Dicionários e conjuntos: funcionamento e custo."
+
+[[competencies]]
+slug = "recursao"
+area = "fundamentos"
+name = "Recursão"
+description = "Resolver problemas dividindo em versões menores de si mesmos."
+
+[[competencies]]
+slug = "busca-e-ordenacao"
+area = "fundamentos"
+name = "Busca e ordenação"
+description = "Busca binária, algoritmos de ordenação e seus custos."

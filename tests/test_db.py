@@ -31,6 +31,8 @@ EXPECTED_TABLES = {
     "study_sessions",
     "attempts",
     "reviews",
+    "module_progress",
+    "checkins",
 }
 
 

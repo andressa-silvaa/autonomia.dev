@@ -12,6 +12,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 @dataclass(frozen=True, slots=True)
 class Settings:
     db_path: Path
+    content_dir: Path
     user_name: str
     api_host: str
     api_port: int
@@ -32,6 +33,7 @@ def load_settings() -> Settings:
     load_dotenv(PROJECT_ROOT / ".env", override=False)
     return Settings(
         db_path=_resolve_from_project_root(Path(os.getenv("FORMACAO_DB_PATH", "data/formacao.db"))),
+        content_dir=_resolve_from_project_root(Path(os.getenv("FORMACAO_CONTENT_DIR", "data"))),
         user_name=os.getenv("FORMACAO_USER_NAME", "Estudante"),
         api_host=os.getenv("FORMACAO_API_HOST", "127.0.0.1"),
         api_port=_parse_port(os.getenv("FORMACAO_API_PORT", "8000")),
