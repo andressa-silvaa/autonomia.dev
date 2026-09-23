@@ -1,0 +1,58 @@
+name: formacao
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    profiles: [sqlserver]
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD in .env}
+    ports: ["127.0.0.1:1433:1433"]
+    volumes: [sqlserver-data:/var/opt/mssql]
+
+  oracle:
+    image: gvenzl/oracle-free:23-slim
+    profiles: [oracle]
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD:?set ORACLE_PASSWORD in .env}
+    ports: ["127.0.0.1:1521:1521"]
+    volumes: [oracle-data:/opt/oracle/oradata]
+
+  mongo:
+    image: mongo:8
+    profiles: [mongo]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-formacao}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:?set MONGO_PASSWORD in .env}
+    ports: ["127.0.0.1:27017:27017"]
+    volumes: [mongo-data:/data/db]
+
+  redis:
+    image: redis:7
+    profiles: [redis]
+    ports: ["127.0.0.1:6379:6379"]
+    volumes: [redis-data:/data]
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    profiles: [rabbitmq]
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-formacao}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?set RABBITMQ_PASSWORD in .env}
+    ports: ["127.0.0.1:5672:5672", "127.0.0.1:15672:15672"]
+    volumes: [rabbitmq-data:/var/lib/rabbitmq]
+
+  kafka:
+    image: apache/kafka:4.0.0
+    profiles: [kafka]
+    ports: ["127.0.0.1:9092:9092"]
+    volumes: [kafka-data:/var/lib/kafka/data]
+
+volumes:
+  sqlserver-data:
+  oracle-data:
+  mongo-data:
+  redis-data:
+  rabbitmq-data:
+  kafka-data:
