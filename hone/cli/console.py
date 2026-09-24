@@ -8,6 +8,7 @@ import typer
 from rich.console import Console
 from rich.theme import Theme
 
+from hone.core.models import Mastery
 from hone.engines.progress import ModuleStatus
 from hone.ui_palette import RICH_STYLES
 from hone.voice import MODULE_STATUS_LABELS, challenge_for
@@ -15,6 +16,9 @@ from hone.voice import MODULE_STATUS_LABELS, challenge_for
 PROGRESS_BAR_WIDTH = 20
 FILLED_BAR = "━"
 EMPTY_BAR = "─"
+FILLED_MASTERY = "●"
+EMPTY_MASTERY = "○"
+MASTERY_METER_WIDTH = len(Mastery) - 1
 
 STATUS_MARKERS = {
     ModuleStatus.COMPLETED: "[ok]✔[/ok]",
@@ -67,3 +71,23 @@ def status_marker(status: ModuleStatus) -> str:
 def status_label(status: ModuleStatus) -> str:
     style = "muted" if status is ModuleStatus.LOCKED else "secondary"
     return f"[{style}]{MODULE_STATUS_LABELS[status]}[/{style}]"
+
+
+def mastery_meter(mastery: Mastery) -> str:
+    filled = mastery.rank
+    return (
+        f"[accent]{FILLED_MASTERY * filled}[/accent]"
+        f"[muted]{EMPTY_MASTERY * (MASTERY_METER_WIDTH - filled)}[/muted]"
+    )
+
+
+def mastery_label(mastery: Mastery) -> str:
+    if mastery is Mastery.NOT_STUDIED:
+        style = "muted"
+    elif mastery.rank >= Mastery.CAN_APPLY.rank:
+        style = "ok"
+    elif mastery is Mastery.UNKNOWN:
+        style = "warning"
+    else:
+        style = "secondary"
+    return f"[{style}]{mastery.label}[/{style}]"

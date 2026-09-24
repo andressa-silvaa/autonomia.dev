@@ -3,10 +3,19 @@ from __future__ import annotations
 import sqlite3
 from dataclasses import dataclass
 
+from hone.core.models import AnswerConfidence
 from hone.core.users import UserNotFoundError
 from hone.core.workspace import DatabaseMissingError, SchemaOutdatedError
 from hone.engines.checkins import AlreadyCheckedInError, EmptyIntentionError, Streak
 from hone.engines.content import ContentError, ContentFileMissingError
+from hone.engines.diagnostic import (
+    AnswerOutcome,
+    DiagnosticIncompleteError,
+    NoFinishedDiagnosticError,
+    NoOpenDiagnosticError,
+    NoQuestionsError,
+)
+from hone.engines.knowledge import NoGoalError
 from hone.engines.progress import (
     AmbiguousModuleError,
     ModuleLink,
@@ -73,6 +82,51 @@ def session_stopped_message(minutes: int) -> str:
     return f"Sessão encerrada: {minutes} min de foco de verdade."
 
 
+def answer_feedback_message(outcome: AnswerOutcome) -> str:
+    if outcome.confidence is AnswerConfidence.DONT_KNOW:
+        return "Anotado. Dizer “não sei” é dado honesto, e é com ele que o mapa fica certo."
+    if outcome.is_correct and outcome.confidence is AnswerConfidence.GUESS:
+        return "Acertou no chute. Conta um pouco, mas o mapa vai pedir confirmação depois."
+    if outcome.is_correct:
+        return "Isso! Essa você sabia."
+    return "Não foi dessa vez, e está tudo bem: diagnóstico serve para achar exatamente isso."
+
+
+def diagnostic_resumed_message(answered: int, total: int) -> str:
+    return f"Retomando de onde você parou: {answered} de {total} respondidas."
+
+
+def diagnostic_started_message(total: int) -> str:
+    return (
+        f"{total} perguntas, sem consulta e sem pressa. "
+        "Aqui não tem nota: tem um mapa do que você já sabe."
+    )
+
+
+def diagnostic_finished_message(solid_count: int, total_count: int) -> str:
+    if solid_count == total_count:
+        return (
+            "Diagnóstico feito, e você aplica tudo o que foi perguntado. Hora de mirar mais alto."
+        )
+    if solid_count == 0:
+        return (
+            "Diagnóstico feito. Muita coisa para aprender pela frente, "
+            "e agora você sabe exatamente por onde começar."
+        )
+    return (
+        f"Diagnóstico feito: {solid_count} de {total_count} competências já estão firmes. "
+        "O resto virou mapa, não peso."
+    )
+
+
+def goal_set_message(title: str) -> str:
+    return f"Objetivo definido: “{title}”. Agora cada módulo tem um porquê."
+
+
+def goal_reached_message(title: str) -> str:
+    return f"Você já chegou em “{title}”. Escolha o próximo topo com hone goal <módulo>."
+
+
 @dataclass(frozen=True, slots=True)
 class Challenge:
     problem: str
@@ -129,6 +183,36 @@ def _challenge_for_study_error(error: Exception) -> Challenge | None:
     return None
 
 
+def _challenge_for_knowledge_error(error: Exception) -> Challenge | None:
+    match error:
+        case NoQuestionsError():
+            return Challenge(
+                "ainda não tem nenhuma pergunta de diagnóstico no banco.",
+                "rode [accent]hone content sync[/accent] para carregar data/diagnostics/.",
+            )
+        case NoOpenDiagnosticError():
+            return Challenge(
+                "não tem nenhum diagnóstico em andamento.",
+                "comece um com [accent]hone diagnostic start[/accent].",
+            )
+        case DiagnosticIncompleteError():
+            return Challenge(
+                f"ainda faltam {error.remaining} pergunta(s) no diagnóstico.",
+                "continue com [accent]hone diagnostic start[/accent].",
+            )
+        case NoFinishedDiagnosticError():
+            return Challenge(
+                "você ainda não terminou nenhum diagnóstico.",
+                "faça o primeiro com [accent]hone diagnostic start[/accent].",
+            )
+        case NoGoalError():
+            return Challenge(
+                "você ainda não escolheu um objetivo.",
+                "escolha um módulo que quer alcançar: [accent]hone goal <módulo>[/accent].",
+            )
+    return None
+
+
 def _challenge_for_setup_error(error: Exception) -> Challenge | None:
     match error:
         case DatabaseMissingError():
@@ -169,6 +253,7 @@ def challenge_for(error: Exception) -> Challenge | None:
     for describe in (
         _challenge_for_module_error,
         _challenge_for_study_error,
+        _challenge_for_knowledge_error,
         _challenge_for_setup_error,
     ):
         challenge = describe(error)

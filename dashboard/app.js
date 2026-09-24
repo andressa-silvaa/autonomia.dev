@@ -5,6 +5,8 @@ const THEME_SEQUENCE = ["auto", "light", "dark"];
 const THEME_LABELS = { auto: "tema: automático", light: "tema: claro", dark: "tema: escuro" };
 const STATUS_MARKERS = { completed: "✔", in_progress: "▶", available: "○", locked: "·" };
 const WEEKDAY_FORMAT = new Intl.DateTimeFormat("pt-BR", { weekday: "short", day: "2-digit" });
+const SHORT_DATE_FORMAT = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit" });
+const LIKELY_KNOWN_NOTE = "o diagnóstico diz que você já aplica isto";
 const LONG_DATE_FORMAT = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "numeric", month: "long" });
 const API_UNREACHABLE = {
   problem: "a API não respondeu.",
@@ -210,7 +212,8 @@ async function renderToday() {
     return content;
   }
   if (overview.next_modules.length) {
-    content.push(el("section", { className: "section" }, [el("h2", { text: "Continue daqui" }), moduleList(overview.next_modules, { showTrack: true })]));
+    const heading = overview.goal ? `Continue daqui · rumo a ${overview.goal.title}` : "Continue daqui";
+    content.push(el("section", { className: "section" }, [el("h2", { text: heading }), moduleList(overview.next_modules, { showTrack: true })]));
   }
   content.push(el("section", { className: "section" }, [el("h2", { text: "Últimos 14 dias" }), studyChart(overview.study_minutes)]));
   content.push(el("section", { className: "section" }, [el("h2", { text: "Trilhas" }), trackProgressList(overview.tracks)]));
@@ -268,11 +271,159 @@ async function renderModule(trackSlug, moduleSlug) {
   return [...header, article, moduleCallout(module)];
 }
 
+function moduleKeyHref(key) {
+  return `#/tracks/${key}`;
+}
+
+function masteryMeter(competency, maxRank) {
+  return el(
+    "div",
+    { className: "mastery-meter", role: "img", "aria-label": `${competency.name}: ${competency.mastery_label}` },
+    Array.from({ length: maxRank }, (_, index) => el("span", { className: "mastery-segment", "data-filled": String(index < competency.mastery_rank) })),
+  );
+}
+
+function competencyRows(competencies, maxRank) {
+  return el(
+    "div",
+    {},
+    competencies.map((competency) =>
+      el("div", { className: "mastery-row", "data-solid": String(competency.is_solid) }, [
+        el("span", { className: "mastery-name", text: competency.name }),
+        masteryMeter(competency, maxRank),
+        el("span", { className: "mastery-label", "data-mastery": competency.mastery, text: competency.mastery_label }),
+      ]),
+    ),
+  );
+}
+
+function diagnosticNotice(map) {
+  if (map.open_diagnostic) {
+    return el("div", { className: "callout" }, [
+      `Diagnóstico pausado: ${map.open_diagnostic.answered} de ${map.open_diagnostic.total} respondidas. Continue com `,
+      el("code", { text: "hone diagnostic start" }),
+      ".",
+    ]);
+  }
+  if (!map.last_diagnostic_at) {
+    return el("div", { className: "callout" }, [
+      "O mapa ainda está em branco. Descubra o que você já sabe com ",
+      el("code", { text: "hone diagnostic start" }),
+      ": sem consulta, sem nota, só um retrato honesto.",
+    ]);
+  }
+  return null;
+}
+
+function pathStepList(steps) {
+  return el(
+    "ol",
+    { className: "list" },
+    steps.map((step) => {
+      const module = step.module;
+      const detail = step.likely_known ? LIKELY_KNOWN_NOTE : module.summary;
+      return el("li", { className: "list-item", "data-status": module.status }, [
+        el("span", { className: "marker", "data-status": module.status, "aria-hidden": "true", text: STATUS_MARKERS[module.status] }),
+        el("span", {}, [
+          el("span", { className: "list-item-title" }, el("a", { href: moduleHref(module), text: module.title })),
+          el("span", { className: step.likely_known ? "list-item-detail note-known" : "list-item-detail", text: detail }),
+        ]),
+        el("span", { className: "status-tag", text: module.status_label }),
+      ]);
+    }),
+  );
+}
+
+function goalSection(path) {
+  const children = [el("h2", { text: "Objetivo" })];
+  if (!path.goal) {
+    children.push(el("div", { className: "callout" }, ["Escolha aonde quer chegar e o sistema monta o caminho: ", el("code", { text: "hone goal <módulo>" }), "."]));
+  } else if (path.reached) {
+    children.push(el("p", { text: `Você já chegou em “${path.goal.title}”. Hora de escolher o próximo topo.` }));
+  } else {
+    children.push(el("p", { className: "goal-title" }, el("a", { href: moduleHref(path.goal), text: path.goal.title })));
+    children.push(pathStepList(path.steps));
+  }
+  return el("section", { className: "section" }, children);
+}
+
+function gapsSection(path, titlesByKey) {
+  const title = path.goal ? "Lacunas no caminho" : "Lacunas apontadas pelo diagnóstico";
+  if (!path.gaps.length) {
+    return el("section", { className: "section" }, [el("h2", { text: title }), el("p", { className: "muted", text: "Nenhuma lacuna à vista." })]);
+  }
+  return el("section", { className: "section" }, [
+    el("h2", { text: title }),
+    el(
+      "ul",
+      { className: "list" },
+      path.gaps.map((gap) =>
+        el("li", { className: "gap-item" }, [
+          el("span", { className: "list-item-title", text: gap.name }),
+          el("span", { className: "mastery-label", "data-mastery": gap.mastery, text: gap.mastery_label }),
+          el(
+            "span",
+            { className: "list-item-detail" },
+            gap.module_keys.length ? ["estude: ", ...gap.module_keys.flatMap((key, index) => [index ? ", " : "", el("a", { href: moduleKeyHref(key), text: titlesByKey.get(key) || key })])] : [],
+          ),
+        ]),
+      ),
+    ),
+  ]);
+}
+
+function graphSection(levels) {
+  return el("section", { className: "section" }, [
+    el("h2", { text: "Pré-requisitos" }),
+    el(
+      "div",
+      { className: "graph-levels" },
+      levels.map((level, index) =>
+        el("div", { className: "graph-level" }, [
+          el("p", { className: "graph-level-label", text: `nível ${index + 1}` }),
+          ...level.map((module) =>
+            el("a", {
+              className: "graph-node",
+              href: moduleHref(module),
+              "data-status": module.status,
+              title: module.prerequisites.length ? `precisa de: ${module.prerequisites.map((link) => link.title).join(", ")}` : "sem pré-requisitos",
+              text: module.title,
+            }),
+          ),
+        ]),
+      ),
+    ),
+  ]);
+}
+
+async function renderMap() {
+  const [map, path, levels] = await Promise.all([fetchJson("/api/knowledge-map"), fetchJson("/api/learning-path"), fetchJson("/api/module-levels")]);
+  const lead = map.last_diagnostic_at
+    ? `Último diagnóstico em ${SHORT_DATE_FORMAT.format(new Date(map.last_diagnostic_at))}. Domínio se prova com evidência, não com horas.`
+    : "Domínio se prova com evidência, não com horas.";
+  const content = [el("h1", { text: "Mapa de conhecimento" }), el("p", { className: "lead", text: lead }), diagnosticNotice(map)];
+  if (!map.areas.length) {
+    content.push(renderChallenge({ problem: "nenhuma competência carregada ainda.", next_step: "rode hone content sync no terminal." }));
+    return content.filter(Boolean);
+  }
+  const titlesByKey = new Map(levels.flat().map((module) => [module.key, module.title]));
+  content.push(goalSection(path), gapsSection(path, titlesByKey));
+  content.push(
+    el("section", { className: "section" }, [
+      el("h2", { text: "Competências" }),
+      ...map.areas.map((area) => el("div", { className: "area-block" }, [el("h3", { className: "area-name", text: area.name }), competencyRows(area.competencies, map.max_mastery_rank)])),
+    ]),
+  );
+  content.push(graphSection(levels));
+  return content.filter(Boolean);
+}
+
 function currentRoute() {
   const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
   if (parts[0] === "tracks" && parts.length === 3) return { nav: "tracks", render: () => renderModule(parts[1], parts[2]) };
   if (parts[0] === "tracks" && parts.length === 2) return { nav: "tracks", render: () => renderTrack(parts[1]) };
   if (parts[0] === "tracks") return { nav: "tracks", render: renderTracks };
+  if (parts[0] === "map") return { nav: "map", render: renderMap };
   return { nav: "today", render: renderToday };
 }
 

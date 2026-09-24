@@ -33,6 +33,11 @@ EXPECTED_TABLES = {
     "reviews",
     "module_progress",
     "checkins",
+    "diagnostic_questions",
+    "diagnostic_runs",
+    "diagnostic_answers",
+    "mastery_events",
+    "user_goals",
 }
 
 

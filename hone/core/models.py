@@ -56,6 +56,35 @@ class GradingMethod(StrEnum):
     SELF_ASSESSMENT = "self"
 
 
+class QuestionKind(StrEnum):
+    CONCEPT = "concept"
+    CODE_READING = "code_reading"
+    DEBUGGING = "debugging"
+    COMPLETE_CODE = "complete_code"
+
+    @property
+    def proves_application(self) -> bool:
+        return self is not QuestionKind.CONCEPT
+
+    @property
+    def label(self) -> str:
+        return QUESTION_KIND_LABELS[self]
+
+
+QUESTION_KIND_LABELS = {
+    QuestionKind.CONCEPT: "conceito",
+    QuestionKind.CODE_READING: "leitura de código",
+    QuestionKind.DEBUGGING: "debugging",
+    QuestionKind.COMPLETE_CODE: "completar código",
+}
+
+
+class AnswerConfidence(StrEnum):
+    SURE = "sure"
+    GUESS = "guess"
+    DONT_KNOW = "dont_know"
+
+
 class ProjectKind(StrEnum):
     INTEGRATOR = "integrator"
     SURPRISE = "surprise"

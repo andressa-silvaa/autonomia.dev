@@ -5,10 +5,11 @@ import webbrowser
 import typer
 
 from hone import __version__
-from hone.cli import study_commands
+from hone.cli import knowledge_commands, study_commands
 from hone.cli.console import console
 from hone.cli.content_commands import content_app
 from hone.cli.db_commands import db_app
+from hone.cli.diagnostic_commands import diagnostic_app
 from hone.cli.session_commands import session_app
 from hone.config import load_settings
 
@@ -20,7 +21,9 @@ app = typer.Typer(
 app.add_typer(db_app, name="db")
 app.add_typer(content_app, name="content")
 app.add_typer(session_app, name="session")
+app.add_typer(diagnostic_app, name="diagnostic")
 study_commands.register(app)
+knowledge_commands.register(app)
 
 
 def _show_version(value: bool) -> None:

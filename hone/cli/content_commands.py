@@ -19,8 +19,16 @@ def content_sync() -> None:
 
     say_ok(
         f"{report.areas} áreas, {report.competencies} competências, "
-        f"{report.tracks} trilha(s) e [accent]{report.modules}[/accent] módulos sincronizados"
+        f"{report.tracks} trilha(s), [accent]{report.modules}[/accent] módulos e "
+        f"[accent]{report.questions}[/accent] perguntas de diagnóstico sincronizados"
     )
+    if report.retired_questions:
+        console.print(
+            "[warning]Estas perguntas sumiram dos arquivos e saíram do diagnóstico "
+            "(as respostas antigas continuam guardadas):[/warning]"
+        )
+        for slug in report.retired_questions:
+            console.print(f"  [muted]{slug}[/muted]")
     if report.orphan_modules:
         console.print(
             "[warning]Estes módulos estão no banco, mas sumiram dos arquivos "

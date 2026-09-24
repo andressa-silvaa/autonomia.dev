@@ -1,12 +1,18 @@
 from __future__ import annotations
 
 import sqlite3
-import tomllib
 from collections import Counter
 from dataclasses import dataclass
 from graphlib import CycleError, TopologicalSorter
 from pathlib import Path
-from typing import Any
+
+from hone.engines.question_bank import (
+    QuestionDefinition,
+    parse_questions,
+    sync_questions,
+    validate_questions,
+)
+from hone.engines.toml_tables import TableReader, read_tables, read_toml
 
 CATALOG_FILENAME = "catalog.toml"
 TRACKS_DIRNAME = "tracks"
@@ -67,6 +73,7 @@ class ContentDefinition:
     areas: tuple[AreaDefinition, ...]
     competencies: tuple[CompetencyDefinition, ...]
     tracks: tuple[TrackDefinition, ...]
+    questions: tuple[QuestionDefinition, ...] = ()
 
     @property
     def modules(self) -> tuple[ModuleDefinition, ...]:
@@ -80,6 +87,8 @@ class SyncReport:
     tracks: int
     modules: int
     orphan_modules: tuple[str, ...]
+    questions: int = 0
+    retired_questions: tuple[str, ...] = ()
 
 
 def module_key(track_slug: str, module_slug: str) -> str:
@@ -103,55 +112,15 @@ def read_module_content(content_dir: Path, content_path: str) -> str:
     return path.read_text(encoding="utf-8")
 
 
-class _TableReader:
-    def __init__(self, table: dict[str, Any], location: str, problems: list[str]) -> None:
-        self._table = table
-        self._location = location
-        self._problems = problems
-
-    def text(self, key: str, *, required: bool = True) -> str:
-        value = self._table.get(key, None if required else "")
-        if not isinstance(value, str) or (required and not value.strip()):
-            self._problems.append(f"{self._location}: field '{key}' must be a non-empty string")
-            return ""
-        return value.strip()
-
-    def text_list(self, key: str) -> tuple[str, ...]:
-        value = self._table.get(key, [])
-        if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
-            self._problems.append(f"{self._location}: field '{key}' must be a list of strings")
-            return ()
-        return tuple(value)
-
-
-def _read_toml(path: Path, problems: list[str]) -> dict[str, Any]:
-    try:
-        with path.open("rb") as file:
-            return tomllib.load(file)
-    except FileNotFoundError:
-        problems.append(f"{path}: file not found")
-    except tomllib.TOMLDecodeError as exc:
-        problems.append(f"{path}: invalid TOML ({exc})")
-    return {}
-
-
-def _tables(document: dict[str, Any], key: str, path: Path, problems: list[str]) -> list[dict]:
-    value = document.get(key, [])
-    if not isinstance(value, list) or not all(isinstance(item, dict) for item in value):
-        problems.append(f"{path}: '{key}' must be an array of tables ([[{key}]])")
-        return []
-    return value
-
-
 def _parse_catalog(
     content_dir: Path, problems: list[str]
 ) -> tuple[tuple[AreaDefinition, ...], tuple[CompetencyDefinition, ...]]:
     path = content_dir / CATALOG_FILENAME
-    document = _read_toml(path, problems)
+    document = read_toml(path, problems)
 
     areas = []
-    for index, table in enumerate(_tables(document, "areas", path, problems), start=1):
-        reader = _TableReader(table, f"{path.name} area #{index}", problems)
+    for index, table in enumerate(read_tables(document, "areas", path, problems), start=1):
+        reader = TableReader(table, f"{path.name} area #{index}", problems)
         areas.append(
             AreaDefinition(
                 reader.text("slug"), reader.text("name"), reader.text("description", required=False)
@@ -159,8 +128,8 @@ def _parse_catalog(
         )
 
     competencies = []
-    for index, table in enumerate(_tables(document, "competencies", path, problems), start=1):
-        reader = _TableReader(table, f"{path.name} competency #{index}", problems)
+    for index, table in enumerate(read_tables(document, "competencies", path, problems), start=1):
+        reader = TableReader(table, f"{path.name} competency #{index}", problems)
         competencies.append(
             CompetencyDefinition(
                 reader.text("slug"),
@@ -175,7 +144,7 @@ def _parse_catalog(
 def _parse_module(
     table: dict, track_slug: str, track_dir: Path, location: str, problems: list[str]
 ) -> ModuleDefinition:
-    reader = _TableReader(table, location, problems)
+    reader = TableReader(table, location, problems)
     content_file = reader.text("content")
     module = ModuleDefinition(
         track_slug=track_slug,
@@ -206,14 +175,14 @@ def _check_content_file(
 
 def _parse_track(track_dir: Path, problems: list[str]) -> TrackDefinition | None:
     path = track_dir / TRACK_FILENAME
-    document = _read_toml(path, problems)
+    document = read_toml(path, problems)
     header = document.get("track")
     location = f"{track_dir.name}/{TRACK_FILENAME}"
     if not isinstance(header, dict):
         problems.append(f"{location}: missing [track] table")
         return None
 
-    reader = _TableReader(header, location, problems)
+    reader = TableReader(header, location, problems)
     slug = reader.text("slug")
     if slug and slug != track_dir.name:
         problems.append(
@@ -222,7 +191,7 @@ def _parse_track(track_dir: Path, problems: list[str]) -> TrackDefinition | None
 
     modules = tuple(
         _parse_module(table, slug, track_dir, f"{location} module #{index}", problems)
-        for index, table in enumerate(_tables(document, "modules", path, problems), start=1)
+        for index, table in enumerate(read_tables(document, "modules", path, problems), start=1)
     )
     return TrackDefinition(
         slug, reader.text("name"), reader.text("description", required=False), modules
@@ -289,9 +258,11 @@ def load_content(content_dir: Path) -> ContentDefinition:
         if track is not None:
             tracks.append(track)
 
-    content = ContentDefinition(areas, competencies, tuple(tracks))
+    questions = parse_questions(content_dir, problems)
+    content = ContentDefinition(areas, competencies, tuple(tracks), questions)
     if not problems:
         _validate_references(content, problems)
+        validate_questions(questions, {c.slug for c in competencies}, problems)
     if not problems:
         _validate_acyclic(content, problems)
     if problems:
@@ -373,6 +344,7 @@ def sync_content(conn: sqlite3.Connection, content: ContentDefinition) -> SyncRe
         _upsert_tracks_and_modules(conn, content)
         ids_by_key = _module_ids_by_key(conn)
         _replace_module_links(conn, content, ids_by_key)
+        retired_questions = sync_questions(conn, content.questions)
 
     defined_keys = {module.key for module in content.modules}
     orphans = tuple(sorted(key for key in ids_by_key if key not in defined_keys))
@@ -382,4 +354,6 @@ def sync_content(conn: sqlite3.Connection, content: ContentDefinition) -> SyncRe
         tracks=len(content.tracks),
         modules=len(content.modules),
         orphan_modules=orphans,
+        questions=len(content.questions),
+        retired_questions=retired_questions,
     )
