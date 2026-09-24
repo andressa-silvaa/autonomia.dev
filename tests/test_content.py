@@ -83,7 +83,9 @@ def test_sync_is_idempotent_and_links_prerequisites(
     assert (report.tracks, report.modules, report.orphan_modules) == (1, 3, ())
     assert conn.execute("SELECT COUNT(*) FROM modules").fetchone()[0] == 3
     assert conn.execute("SELECT COUNT(*) FROM module_prerequisites").fetchone()[0] == 3
-    assert conn.execute("SELECT COUNT(*) FROM module_competencies").fetchone()[0] == 1
+    assert conn.execute("SELECT COUNT(*) FROM module_competencies").fetchone()[0] == 2
+    assert (report.questions, report.retired_questions) == (3, ())
+    assert conn.execute("SELECT COUNT(*) FROM diagnostic_questions").fetchone()[0] == 3
 
 
 def test_sync_updates_titles_and_reports_orphans(conn: sqlite3.Connection, tmp_path: Path) -> None:

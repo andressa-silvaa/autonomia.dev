@@ -1,0 +1,482 @@
+[[questions]]
+slug = "compiler-vs-interpreter"
+competency = "program-execution"
+kind = "concept"
+prompt = "Qual é a diferença principal entre um **compilador** e um **interpretador**?"
+options = [
+  "O compilador traduz o programa inteiro antes de rodar; o interpretador traduz e executa enquanto lê",
+  "O compilador só funciona com C#; o interpretador só com Python",
+  "O interpretador gera um executável; o compilador não gera nada",
+  "Nenhuma: são dois nomes para a mesma coisa",
+]
+answer = 1
+explanation = "Compilar é traduzir tudo de uma vez para outra forma (código de máquina, IL, bytecode). Interpretar é ler e executar aos poucos."
+
+[[questions]]
+slug = "python-runs-bytecode"
+competency = "program-execution"
+kind = "concept"
+prompt = "Quando você roda `python app.py`, o que acontece com o seu código?"
+options = [
+  "O CPython compila o código para bytecode, e a máquina virtual do Python executa esse bytecode",
+  "O Python gera um .exe e o sistema operacional executa esse arquivo",
+  "A CPU lê o texto do arquivo .py e executa direto",
+  "O código é enviado para um servidor, que devolve o resultado",
+]
+answer = 1
+explanation = "A CPU não entende Python. O CPython transforma o código em bytecode (os arquivos .pyc) e a máquina virtual dele executa uma instrução de cada vez."
+
+[[questions]]
+slug = "execution-order"
+competency = "program-execution"
+kind = "code_reading"
+prompt = '''
+O que este programa imprime?
+
+```python
+print("A")
+
+def mostra():
+    print("B")
+
+print("C")
+mostra()
+```
+'''
+options = ["A B C", "A C B", "A C", "B A C"]
+answer = 2
+explanation = "Definir uma função não executa o corpo dela. O \"B\" só aparece quando mostra() é chamada, depois do \"C\"."
+
+[[questions]]
+slug = "binary-to-decimal"
+competency = "data-representation"
+kind = "concept"
+prompt = "Quanto vale o número binário `1011` em decimal? Digite só o número."
+accept = ["11"]
+explanation = "1×8 + 0×4 + 1×2 + 1×1 = 11."
+
+[[questions]]
+slug = "float-sum"
+competency = "data-representation"
+kind = "code_reading"
+prompt = '''
+O que este código imprime?
+
+```python
+print(0.1 + 0.2 == 0.3)
+```
+'''
+options = ["True", "False", "0.3", "Dá erro"]
+answer = 2
+explanation = "0.1 e 0.2 não têm representação exata em binário. A soma dá 0.30000000000000004, então a comparação é False. Para dinheiro, use Decimal ou centavos em inteiros."
+
+[[questions]]
+slug = "utf8-byte-length"
+competency = "data-representation"
+kind = "code_reading"
+prompt = '''
+O que este código imprime?
+
+```python
+print(len("café".encode("utf-8")))
+```
+'''
+options = ["4", "5", "8", "Dá erro"]
+answer = 2
+explanation = "São 4 caracteres, mas o \"é\" ocupa 2 bytes em UTF-8. Texto e bytes são coisas diferentes."
+
+[[questions]]
+slug = "shared-list-reference"
+competency = "memory-model"
+kind = "code_reading"
+prompt = '''
+O que este código imprime?
+
+```python
+a = [1, 2]
+b = a
+b.append(3)
+print(a)
+```
+'''
+options = ["[1, 2]", "[1, 2, 3]", "[3]", "Dá erro"]
+answer = 2
+explanation = "b = a não copia a lista: as duas variáveis apontam para o mesmo objeto no heap. Mudou por b, mudou para a."
+
+[[questions]]
+slug = "rebinding-parameter"
+competency = "memory-model"
+kind = "code_reading"
+prompt = '''
+O que este código imprime?
+
+```python
+def dobra(x):
+    x = x * 2
+
+n = 5
+dobra(n)
+print(n)
+```
+'''
+options = ["5", "10", "None", "Dá erro"]
+answer = 1
+explanation = "Dentro da função, x = x * 2 faz o x local apontar para outro objeto. O n de fora continua apontando para o 5."
+
+[[questions]]
+slug = "stack-frame-contents"
+competency = "memory-model"
+kind = "concept"
+prompt = "Onde ficam os parâmetros e as variáveis locais de uma chamada de função?"
+options = [
+  "No stack frame da chamada, que é desempilhado quando a função retorna",
+  "No disco, até o programa terminar",
+  "Num espaço global compartilhado por todas as funções",
+  "No garbage collector",
+]
+answer = 1
+explanation = "Cada chamada empilha um frame com parâmetros, variáveis locais e o endereço de retorno. Quando ela termina, o frame sai da pilha."
+
+[[questions]]
+slug = "garbage-collector-role"
+competency = "memory-model"
+kind = "concept"
+prompt = "O que o garbage collector faz?"
+options = [
+  "Libera a memória de objetos no heap que nenhuma referência alcança mais",
+  "Apaga as variáveis locais quando a função termina",
+  "Remove arquivos temporários do disco",
+  "Impede que o programa use memória demais",
+]
+answer = 1
+explanation = "Ele cuida do heap: quando nada mais aponta para um objeto, a memória dele pode ser reaproveitada."
+
+[[questions]]
+slug = "nested-loop-complexity"
+competency = "complexity-analysis"
+kind = "code_reading"
+prompt = '''
+Qual é a complexidade de tempo, no pior caso, desta função para uma lista com n itens?
+
+```python
+def tem_duplicado(itens):
+    for i in range(len(itens)):
+        for j in range(i + 1, len(itens)):
+            if itens[i] == itens[j]:
+                return True
+    return False
+```
+'''
+options = ["O(1)", "O(log n)", "O(n)", "O(n²)"]
+answer = 4
+explanation = "No pior caso (sem duplicados), cada item é comparado com todos os seguintes: cerca de n²/2 comparações, que é O(n²)."
+
+[[questions]]
+slug = "simplify-big-o"
+competency = "complexity-analysis"
+kind = "concept"
+prompt = "Simplifique `O(3n² + 5n + 100)`. Digite a resposta (por exemplo, `O(n)`)."
+accept = ["O(n²)", "O(n^2)", "O(n**2)", "O(n*n)"]
+explanation = "Descarte as constantes e fique com o termo que cresce mais rápido: O(n²)."
+
+[[questions]]
+slug = "membership-inside-loop"
+competency = "complexity-analysis"
+kind = "code_reading"
+prompt = '''
+Com `a` e `b` tendo n itens cada, qual a complexidade desta função? E o que muda se você fizer `b = set(b)` antes do laço?
+
+```python
+def comuns(a, b):
+    resultado = []
+    for x in a:
+        if x in b:
+            resultado.append(x)
+    return resultado
+```
+'''
+options = [
+  "O(n²); com set(b) cai para O(n) em média",
+  "O(n); com set(b) nada muda",
+  "O(n log n); com set(b) vira O(1)",
+  "O(n²); com set(b) continua O(n²)",
+]
+answer = 1
+explanation = "x in lista percorre a lista (O(n)) a cada volta do laço: O(n²). Num set, x in b é O(1) em média, então o total cai para O(n)."
+
+[[questions]]
+slug = "lifo-structure"
+competency = "linear-data-structures"
+kind = "concept"
+prompt = "Qual estrutura segue a regra \"o último a entrar é o primeiro a sair\"?"
+options = ["Pilha", "Fila", "Tabela hash", "Array ordenado"]
+answer = 1
+explanation = "Pilha (stack) é LIFO. Fila (queue) é FIFO: o primeiro a entrar é o primeiro a sair."
+
+[[questions]]
+slug = "deque-both-ends"
+competency = "linear-data-structures"
+kind = "code_reading"
+prompt = '''
+O que este código imprime?
+
+```python
+from collections import deque
+
+fila = deque()
+fila.append("a")
+fila.append("b")
+fila.append("c")
+print(fila.popleft(), fila.pop())
+```
+'''
+options = ["a c", "c a", "a b", "c b"]
+answer = 1
+explanation = "popleft() tira do começo (o \"a\") e pop() tira do fim (o \"c\")."
+
+[[questions]]
+slug = "insert-at-front-cost"
+competency = "linear-data-structures"
+kind = "concept"
+prompt = "Por que `lista.insert(0, x)` numa lista Python com n itens custa O(n)?"
+options = [
+  "Porque todos os itens precisam andar uma posição para abrir espaço",
+  "Porque o Python procura a posição 0 percorrendo a lista",
+  "Porque o Python ordena a lista depois de inserir",
+  "Não custa O(n): inserir em qualquer posição é O(1)",
+]
+answer = 1
+explanation = "A lista do Python é um array contíguo. Inserir no começo obriga a deslocar tudo. Se você precisa inserir e remover no começo, use deque."
+
+[[questions]]
+slug = "reverse-with-stack-bug"
+competency = "linear-data-structures"
+kind = "debugging"
+prompt = '''
+Esta função deveria inverter o texto, mas devolve o texto igual. Qual correção resolve?
+
+```python
+def inverte(texto):
+    pilha = []
+    for letra in texto:
+        pilha.append(letra)
+    resultado = ""
+    while pilha:
+        resultado += pilha.pop(0)
+    return resultado
+```
+'''
+options = [
+  "Trocar pilha.pop(0) por pilha.pop()",
+  "Trocar while pilha por for letra in pilha",
+  "Começar resultado com None em vez de \"\"",
+  "Trocar resultado += por resultado =",
+]
+answer = 1
+explanation = "pop(0) tira do começo, e isso é fila, não pilha. pop() tira do topo (o fim da lista) e inverte a ordem."
+
+[[questions]]
+slug = "dict-lookup-average"
+competency = "hash-tables"
+kind = "concept"
+prompt = "Por que buscar uma chave num dicionário é O(1) em média?"
+options = [
+  "O hash da chave aponta direto para o bucket onde ela deve estar",
+  "O dicionário fica ordenado e usa busca binária",
+  "O Python guarda em cache todas as buscas anteriores",
+  "Porque dicionários têm tamanho fixo",
+]
+answer = 1
+explanation = "A função hash transforma a chave num número, que vira um índice. Não é preciso percorrer nada, a não ser quando há colisões."
+
+[[questions]]
+slug = "list-as-dict-key"
+competency = "hash-tables"
+kind = "code_reading"
+prompt = '''
+O que acontece ao rodar este código?
+
+```python
+d = {}
+d[[1, 2]] = "par"
+```
+'''
+options = [
+  "TypeError: lista não pode ser chave, porque é mutável (unhashable)",
+  "Cria a chave [1, 2] normalmente",
+  "Converte a lista para a tupla (1, 2) e cria a chave",
+  "KeyError",
+]
+answer = 1
+explanation = "Se a chave pudesse mudar depois de guardada, o hash dela mudaria e ela ficaria perdida no bucket errado. Por isso chaves precisam ser imutáveis, como uma tupla."
+
+[[questions]]
+slug = "hash-collision"
+competency = "hash-tables"
+kind = "concept"
+prompt = "O que é uma **colisão** numa tabela hash?"
+options = [
+  "Duas chaves diferentes caírem no mesmo bucket",
+  "Inserir duas vezes a mesma chave",
+  "A tabela ficar sem memória",
+  "Buscar uma chave que não existe",
+]
+answer = 1
+explanation = "Colisões são inevitáveis e tratadas (encadeamento ou endereçamento aberto). Muitas colisões degradam a busca para O(n)."
+
+[[questions]]
+slug = "count-words-with-get"
+competency = "hash-tables"
+kind = "complete_code"
+prompt = '''
+Complete a lacuna para contar quantas vezes cada palavra aparece. Digite só o que vai no lugar de `______`.
+
+```python
+def conta_palavras(palavras):
+    contagem = {}
+    for p in palavras:
+        contagem[p] = ______ + 1
+    return contagem
+```
+'''
+accept = ["contagem.get(p, 0)"]
+explanation = "contagem.get(p, 0) devolve 0 quando a palavra ainda não está no dicionário, sem levantar KeyError."
+
+[[questions]]
+slug = "trace-recursive-sum"
+competency = "recursion"
+kind = "code_reading"
+prompt = '''
+O que este código imprime? Digite só o número.
+
+```python
+def f(n):
+    if n == 0:
+        return 0
+    return n + f(n - 1)
+
+print(f(4))
+```
+'''
+accept = ["10"]
+explanation = "f(4) = 4 + f(3) = 4 + 3 + f(2) = 4 + 3 + 2 + 1 + f(0) = 10."
+
+[[questions]]
+slug = "missing-base-case"
+competency = "recursion"
+kind = "debugging"
+prompt = '''
+Esta função trava com erro depois de imprimir muitos números. O que falta?
+
+```python
+def contagem_regressiva(n):
+    print(n)
+    contagem_regressiva(n - 1)
+```
+'''
+options = [
+  "Um caso base, por exemplo: if n == 0: return",
+  "Um return no final da função",
+  "Trocar n - 1 por n + 1",
+  "Nada: o erro é do Python, não do código",
+]
+answer = 1
+explanation = "Sem caso base, a recursão nunca para. A pilha cresce até o Python levantar RecursionError."
+
+[[questions]]
+slug = "python-recursion-limit"
+competency = "recursion"
+kind = "concept"
+prompt = "O que acontece em Python quando uma recursão passa do limite de profundidade (1000 chamadas, por padrão)?"
+options = [
+  "O Python levanta RecursionError",
+  "O Python converte a recursão num laço automaticamente",
+  "O processo morre com um erro que não pode ser capturado",
+  "A recursão continua até acabar a memória RAM",
+]
+answer = 1
+explanation = "O Python tem um limite artificial e levanta RecursionError. Quem morre sem poder capturar é o C#, com StackOverflowException."
+
+[[questions]]
+slug = "complete-factorial"
+competency = "recursion"
+kind = "complete_code"
+prompt = '''
+Complete o caso recursivo do fatorial. Digite só o que vai no lugar de `______`.
+
+```python
+def fatorial(n):
+    if n == 0:
+        return 1
+    return n * ______
+```
+'''
+accept = ["fatorial(n - 1)"]
+explanation = "n! = n × (n − 1)!, e a chamada com n − 1 aproxima do caso base."
+
+[[questions]]
+slug = "binary-search-steps"
+competency = "searching-and-sorting"
+kind = "concept"
+prompt = "Numa lista ordenada com 1 milhão de itens, a busca binária precisa de, no máximo, cerca de quantas comparações?"
+options = ["20", "1.000", "500.000", "1.000.000"]
+answer = 1
+explanation = "Cada comparação corta o espaço pela metade: log₂(1.000.000) ≈ 20."
+
+[[questions]]
+slug = "binary-search-precondition"
+competency = "searching-and-sorting"
+kind = "concept"
+prompt = "Qual condição a busca binária exige da lista?"
+options = [
+  "Estar ordenada",
+  "Não ter itens repetidos",
+  "Ter um tamanho que seja potência de 2",
+  "Ter só números",
+]
+answer = 1
+explanation = "É a ordenação que permite descartar metade da lista a cada comparação."
+
+[[questions]]
+slug = "binary-search-off-by-one"
+competency = "searching-and-sorting"
+kind = "debugging"
+prompt = '''
+`busca_binaria([1, 3, 5], 5)` devolve `-1`, mas o 5 está na lista. Qual correção resolve?
+
+```python
+def busca_binaria(itens, alvo):
+    inicio, fim = 0, len(itens) - 1
+    while inicio < fim:
+        meio = (inicio + fim) // 2
+        if itens[meio] == alvo:
+            return meio
+        if itens[meio] < alvo:
+            inicio = meio + 1
+        else:
+            fim = meio - 1
+    return -1
+```
+'''
+options = [
+  "Trocar while inicio < fim por while inicio <= fim",
+  "Trocar // por / no cálculo do meio",
+  "Trocar inicio = meio + 1 por inicio = meio",
+  "Trocar fim = meio - 1 por fim = meio",
+]
+answer = 1
+explanation = "Quando inicio == fim ainda sobra um item para olhar. Com < o laço para antes de testá-lo."
+
+[[questions]]
+slug = "merge-sort-complexity"
+competency = "searching-and-sorting"
+kind = "concept"
+prompt = "Qual é a complexidade de tempo do merge sort?"
+options = [
+  "O(n log n) em todos os casos",
+  "O(n²) no pior caso e O(n) no melhor",
+  "O(n) em todos os casos",
+  "O(log n) em todos os casos",
+]
+answer = 1
+explanation = "Ele divide a lista ao meio (log n níveis) e junta tudo em cada nível (n trabalho): n log n, sempre."

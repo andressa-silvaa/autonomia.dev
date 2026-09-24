@@ -91,7 +91,10 @@ def today() -> None:
         return
 
     if overview.next_modules:
-        console.print(Rule("[muted]continue daqui[/muted]", style="muted", align="left"))
+        heading = "continue daqui"
+        if overview.goal_path is not None and not overview.goal_path.is_reached:
+            heading = f"continue daqui, rumo a “{overview.goal_path.goal.title}”"
+        console.print(Rule(f"[muted]{heading}[/muted]", style="muted", align="left"))
         _print_next_modules(overview.next_modules)
     console.print(Rule("[muted]trilhas[/muted]", style="muted", align="left"))
     _print_track_progress(overview.tracks)

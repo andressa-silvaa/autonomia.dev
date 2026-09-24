@@ -10,7 +10,8 @@ Tudo roda local e de graça: Python, SQLite, Docker e Ollama. O comando do termi
 |---|---|
 | 0 — Arquitetura mínima | ✅ entregue |
 | 1 — Núcleo de estudos | ✅ entregue |
-| 2 — Diagnóstico e mapa de conhecimento | próxima |
+| 2 — Diagnóstico e mapa de conhecimento | ✅ entregue |
+| 3 — Engine de exercícios | próxima |
 
 ## Requisitos
 
@@ -53,6 +54,22 @@ hone session stop -n "o que aprendi"
 hone done recursion                # conclui o módulo e mostra o que destravou
 ```
 
+## Diagnóstico e mapa de conhecimento
+
+```powershell
+hone diagnostic start              # perguntas sem consulta; digite "pausar" para parar e continuar depois
+hone diagnostic result             # resultado do último diagnóstico
+hone map                           # nível de domínio em cada competência
+hone goal searching-and-sorting    # define aonde você quer chegar (hone goal --clear remove)
+hone path                          # pré-requisitos que faltam, na ordem sugerida
+hone path recursion                # o mesmo, para qualquer módulo, sem mudar o objetivo
+hone gaps                          # lacunas: competências que ainda não estão firmes
+```
+
+Depois de cada resposta, o sistema pergunta se você sabia ou chutou. "Não sei" é resposta válida: é com ela que o mapa fica honesto. O diagnóstico vai no máximo até "consegue aplicar"; os níveis acima dependem de explicar e ensinar, que entram em fases futuras. As regras estão em `docs/adr/0003-knowledge-map.md`.
+
+O diagnóstico não conclui módulos sozinho. Quando ele indica que você já domina um módulo, o `hone path` avisa, e você decide se roda `hone done`.
+
 Um módulo só abre quando todos os pré-requisitos estão concluídos. Os módulos podem ser chamados pelo nome curto (`recursion`) ou pelo nome completo (`cs-fundamentals/recursion`).
 
 ## Dashboard
@@ -61,7 +78,7 @@ Um módulo só abre quando todos os pré-requisitos estão concluídos. Os módu
 hone serve --open
 ```
 
-O dashboard mostra o streak, o check-in, o tempo de estudo dos últimos 14 dias, o progresso nas trilhas e o conteúdo dos módulos. Ele é só para leitura: registrar sessões e concluir módulos continua no CLI. O tema segue o sistema operacional e pode ser trocado no botão do topo.
+O dashboard mostra o streak, o check-in, o tempo de estudo dos últimos 14 dias, o progresso nas trilhas, o conteúdo dos módulos e, na aba **Mapa**, o domínio por competência, o caminho até o objetivo, as lacunas e os módulos por nível de pré-requisito. Ele é só para leitura: registrar sessões e concluir módulos continua no CLI. O tema segue o sistema operacional e pode ser trocado no botão do topo.
 
 Funciona sem internet: o Chart.js está em `dashboard/vendor/`. Sem conexão, só as fontes do Google Fonts deixam de carregar, e o navegador usa as fontes locais de fallback.
 
@@ -73,6 +90,7 @@ data/
   tracks/<trilha>/
     track.toml              a trilha, seus módulos e pré-requisitos
     01-modulo.md            teoria em Markdown
+  diagnostics/<nome>.toml   perguntas do diagnóstico, por competência
 ```
 
 Exemplo de módulo no `track.toml`:
@@ -90,6 +108,28 @@ competencies = ["recursion"]
 - `requires` aceita módulos da mesma trilha (`"recursion"`) ou de outra (`"outra-trilha/modulo"`).
 - `hone content sync` valida tudo antes de gravar: pré-requisitos inexistentes, ciclos, arquivos faltando, competências desconhecidas. Se algo estiver errado, ele lista todos os problemas e não grava nada.
 - Remover um módulo do arquivo não apaga o seu progresso no banco. O sync só avisa que o módulo ficou órfão.
+
+Exemplos de pergunta do diagnóstico:
+
+```toml
+[[questions]]
+slug = "lifo-structure"
+competency = "linear-data-structures"
+kind = "concept"                 # concept, code_reading, debugging ou complete_code
+prompt = "Qual estrutura segue a regra \"o último a entrar é o primeiro a sair\"?"
+options = ["Pilha", "Fila", "Tabela hash"]
+answer = 1                       # número da alternativa certa
+explanation = "Pilha é LIFO; fila é FIFO."
+
+[[questions]]
+slug = "complete-factorial"
+competency = "recursion"
+kind = "complete_code"
+prompt = "Complete: `return n * ______`"
+accept = ["fatorial(n - 1)"]     # resposta digitada; espaços e maiúsculas não importam
+```
+
+Perguntas de código (`code_reading`, `debugging`, `complete_code`) valem como evidência de "consegue aplicar"; perguntas de conceito, como "reconhece". Remover uma pergunta do arquivo tira ela dos próximos diagnósticos, mas as respostas antigas continuam no banco.
 
 ## API local
 
@@ -125,6 +165,11 @@ hone/
     workspace.py abre banco + usuária para CLI e API
   engines/
     content.py   leitura, validação e sync de data/
+    toml_tables.py    leitura e validação de campos dos arquivos TOML
+    question_bank.py  perguntas do diagnóstico (data/diagnostics/)
+    diagnostic.py     rodadas, correção e regras de domínio
+    mastery.py        domínio atual e histórico por competência
+    knowledge.py      grafo (NetworkX), caminho, lacunas e objetivo
     progress.py  status dos módulos e trava de pré-requisitos
     sessions.py  sessões de estudo
     checkins.py  check-in diário e streak
