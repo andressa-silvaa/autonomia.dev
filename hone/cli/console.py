@@ -8,9 +8,9 @@ import typer
 from rich.console import Console
 from rich.theme import Theme
 
-from formacao.engines.progress import ModuleStatus
-from formacao.ui_palette import RICH_STYLES
-from formacao.voice import MODULE_STATUS_LABELS, challenge_for
+from hone.engines.progress import ModuleStatus
+from hone.ui_palette import RICH_STYLES
+from hone.voice import MODULE_STATUS_LABELS, challenge_for
 
 PROGRESS_BAR_WIDTH = 20
 FILLED_BAR = "━"

@@ -7,7 +7,7 @@
 
 ### 1. Conteúdo em arquivos, sincronizado com o banco
 
-Áreas, competências, trilhas e módulos ficam em `data/` (TOML + Markdown), e `formacao content sync` importa tudo para o SQLite. Assim o conteúdo é versionado no Git, pode ser editado em qualquer editor e o banco guarda só o que é pessoal (progresso, sessões, check-ins). Decisão tomada pela criadora.
+Áreas, competências, trilhas e módulos ficam em `data/` (TOML + Markdown), e `hone content sync` importa tudo para o SQLite. Assim o conteúdo é versionado no Git, pode ser editado em qualquer editor e o banco guarda só o que é pessoal (progresso, sessões, check-ins). Decisão tomada pela criadora.
 
 - O TOML é lido com `tomllib`, que vem na biblioteca padrão, sem dependência nova.
 - O sync valida tudo antes de gravar e roda numa única transação. Um erro não deixa o banco pela metade.
@@ -23,9 +23,9 @@ A trava de progresso vale para abrir (`read`, `session start`) e para concluir (
 
 ### 3. Check-in manual com intenção
 
-`formacao checkin` registra, uma vez por dia, uma frase sobre o que vai ser estudado. O streak conta os dias seguidos com check-in. Se hoje ainda não teve check-in, o streak de ontem continua vivo até a meia-noite. Decisão tomada pela criadora.
+`hone checkin` registra, uma vez por dia, uma frase sobre o que vai ser estudado. O streak conta os dias seguidos com check-in. Se hoje ainda não teve check-in, o streak de ontem continua vivo até a meia-noite. Decisão tomada pela criadora.
 
-O dia do check-in usa a data local; os horários ficam em UTC (`formacao/core/clock.py`).
+O dia do check-in usa a data local; os horários ficam em UTC (`hone/core/clock.py`).
 
 ### 4. Uma sessão aberta por vez
 
@@ -40,7 +40,7 @@ CLI e API abrem o banco pelo mesmo `open_workspace()`, que confere se o banco ex
 HTML + JS puro + Chart.js, servidos pelo FastAPI. As rotas são por hash (`#/trilhas/...`), então não é preciso configurar nada no servidor.
 
 - O Chart.js fica em `dashboard/vendor/` para o dashboard funcionar offline.
-- As cores vêm de `/theme/tokens.css`, gerado a partir de `formacao/ui_palette.py`. CLI e dashboard usam a mesma fonte de cores.
+- As cores vêm de `/theme/tokens.css`, gerado a partir de `hone/ui_palette.py`. CLI e dashboard usam a mesma fonte de cores.
 - O Markdown é renderizado no servidor com `markdown-it-py`, com HTML bruto desligado.
 - Nesta fase o dashboard é só leitura. Ações ficam no CLI, que é a interface primária do MVP.
 
@@ -51,4 +51,4 @@ Bricolage Grotesque (títulos, com peso e personalidade), Atkinson Hyperlegible 
 ## Consequências
 
 - Adicionar uma trilha é criar uma pasta em `data/tracks/` e rodar o sync.
-- Um banco da Fase 0 precisa de `formacao db init` para receber a migração 0002. Os dados existentes são preservados.
+- Um banco da Fase 0 precisa de `hone db init` para receber a migração 0002. Os dados existentes são preservados.

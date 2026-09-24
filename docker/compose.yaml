@@ -1,4 +1,4 @@
-name: formacao
+name: hone
 
 services:
   sqlserver:
@@ -23,7 +23,7 @@ services:
     image: mongo:8
     profiles: [mongo]
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-formacao}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-hone}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:?set MONGO_PASSWORD in .env}
     ports: ["127.0.0.1:27017:27017"]
     volumes: [mongo-data:/data/db]
@@ -38,7 +38,7 @@ services:
     image: rabbitmq:4-management
     profiles: [rabbitmq]
     environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-formacao}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-hone}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?set RABBITMQ_PASSWORD in .env}
     ports: ["127.0.0.1:5672:5672", "127.0.0.1:15672:15672"]
     volumes: [rabbitmq-data:/var/lib/rabbitmq]

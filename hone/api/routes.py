@@ -5,19 +5,19 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from formacao.api.markdown import render_markdown
-from formacao.api.schemas import (
+from hone.api.markdown import render_markdown
+from hone.api.schemas import (
     ModuleDetailOut,
     ModuleOut,
     OverviewOut,
     TrackDetailOut,
     TrackSummaryOut,
 )
-from formacao.core.clock import local_today, utc_now
-from formacao.core.workspace import Workspace, open_workspace
-from formacao.engines.content import module_key, read_module_content
-from formacao.engines.overview import build_overview
-from formacao.engines.progress import find_track_view, list_track_views, resolve_module
+from hone.core.clock import local_today, utc_now
+from hone.core.workspace import Workspace, open_workspace
+from hone.engines.content import module_key, read_module_content
+from hone.engines.overview import build_overview
+from hone.engines.progress import find_track_view, list_track_views, resolve_module
 
 router = APIRouter(prefix="/api")
 

@@ -11,7 +11,9 @@ These rules apply to every file you create or edit in this repository.
 
 - Identifiers (variables, functions, classes, modules, files, folders, tables, columns, enum values, test names, migration names, environment variables, CLI command names) must be in English.
 - Log messages, exception messages and developer-facing strings are in English.
-- The only exception is **user-facing text** shown to the person studying (CLI output, help texts, dashboard labels, study content in `data/tracks/`). That text stays in Brazilian Portuguese.
+- Folder and file names are in English everywhere, including content in `data/` (e.g. `data/tracks/cs-fundamentals/07-recursion.md`). Content slugs (areas, competencies, tracks, modules) are English identifiers too (e.g. `cs-fundamentals/recursion`).
+- The package and CLI are called `hone`; the project/brand name is `autonomia.dev`.
+- The only exception is **user-facing text** shown to the person studying (CLI output, help texts, dashboard labels, and the titles, names, descriptions and Markdown body of study content in `data/`). That text stays in Brazilian Portuguese.
 
 ## 2. Comments are forbidden
 

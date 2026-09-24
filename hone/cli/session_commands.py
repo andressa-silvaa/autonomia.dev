@@ -2,17 +2,17 @@ from __future__ import annotations
 
 import typer
 
-from formacao.cli.console import challenges_as_exit, console, say_ok
-from formacao.core.clock import utc_now
-from formacao.core.workspace import open_workspace
-from formacao.engines.progress import resolve_module, start_module
-from formacao.engines.sessions import (
+from hone.cli.console import challenges_as_exit, console, say_ok
+from hone.core.clock import utc_now
+from hone.core.workspace import open_workspace
+from hone.engines.progress import resolve_module, start_module
+from hone.engines.sessions import (
     SessionView,
     find_active_session,
     start_session,
     stop_session,
 )
-from formacao.voice import session_stopped_message
+from hone.voice import session_stopped_message
 
 session_app = typer.Typer(help="Sessões de estudo cronometradas.", no_args_is_help=True)
 
@@ -23,7 +23,7 @@ def _topic(session: SessionView) -> str:
 
 @session_app.command("start", help="Começa a cronometrar uma sessão de estudo.")
 def session_start(
-    module: str | None = typer.Argument(None, help="Módulo que você vai estudar (ex.: recursao)."),
+    module: str | None = typer.Argument(None, help="Módulo que você vai estudar (ex.: recursion)."),
 ) -> None:
     with challenges_as_exit(), open_workspace() as workspace:
         now = utc_now()
@@ -35,7 +35,7 @@ def session_start(
         session = start_session(workspace.conn, workspace.user_id, module_id, now)
 
     say_ok(f"Sessão começou{_topic(session)}. Celular longe, foco perto.")
-    console.print("Quando terminar: [accent]formacao session stop[/accent]")
+    console.print("Quando terminar: [accent]hone session stop[/accent]")
 
 
 @session_app.command("stop", help="Encerra a sessão atual.")
@@ -55,8 +55,7 @@ def session_status() -> None:
         session = find_active_session(workspace.conn, workspace.user_id)
     if session is None:
         console.print(
-            "[muted]Nenhuma sessão aberta.[/muted] "
-            "Comece com [accent]formacao session start[/accent]."
+            "[muted]Nenhuma sessão aberta.[/muted] Comece com [accent]hone session start[/accent]."
         )
         return
     minutes = session.elapsed_minutes(utc_now())

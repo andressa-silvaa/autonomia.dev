@@ -5,9 +5,9 @@ from contextlib import closing
 import typer
 from rich.table import Table
 
-from formacao.cli.console import challenges_as_exit, console, say_challenge, say_ok
-from formacao.config import load_settings
-from formacao.core.db import (
+from hone.cli.console import challenges_as_exit, console, say_challenge, say_ok
+from hone.config import load_settings
+from hone.core.db import (
     MigrationError,
     connect,
     latest_version,
@@ -15,8 +15,8 @@ from formacao.core.db import (
     schema_version,
     table_counts,
 )
-from formacao.core.users import ensure_default_user
-from formacao.core.workspace import DatabaseMissingError
+from hone.core.users import ensure_default_user
+from hone.core.workspace import DatabaseMissingError
 
 db_app = typer.Typer(help="Banco de dados local (SQLite).", no_args_is_help=True)
 
@@ -45,9 +45,7 @@ def db_init() -> None:
             f"[muted]{settings.db_path}[/muted]."
         )
         console.print("Página em branco é só o começo da história. Bora escrever a primeira.")
-        console.print(
-            "Próximo passo: [accent]formacao content sync[/accent] para carregar as trilhas."
-        )
+        console.print("Próximo passo: [accent]hone content sync[/accent] para carregar as trilhas.")
     else:
         console.print(f"\n[title]De volta, {user.name}.[/title] Tudo no lugar.")
 

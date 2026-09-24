@@ -4,12 +4,12 @@ from datetime import date, datetime
 
 from pydantic import BaseModel
 
-from formacao.core.clock import utc_now
-from formacao.engines.checkins import Checkin, Streak
-from formacao.engines.overview import Overview
-from formacao.engines.progress import ModuleLink, ModuleStatus, ModuleView, TrackView
-from formacao.engines.sessions import SessionView
-from formacao.voice import MODULE_STATUS_LABELS, streak_message
+from hone.core.clock import utc_now
+from hone.engines.checkins import Checkin, Streak
+from hone.engines.overview import Overview
+from hone.engines.progress import ModuleLink, ModuleStatus, ModuleView, TrackView
+from hone.engines.sessions import SessionView
+from hone.voice import MODULE_STATUS_LABELS, streak_message
 
 
 class ChallengeOut(BaseModel):

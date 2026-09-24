@@ -7,8 +7,8 @@ import pytest
 from fastapi.testclient import TestClient
 from typer.testing import CliRunner
 
-from formacao.api.app import app as api_app
-from formacao.cli.app import app as cli_app
+from hone.api.app import app as api_app
+from hone.cli.app import app as cli_app
 
 runner = CliRunner()
 
@@ -71,7 +71,7 @@ def test_completing_whole_track_celebrates(ready: None) -> None:
 
 
 def test_commands_before_init_explain_what_to_do(db_path: Path, content_dir: Path) -> None:
-    assert "formacao db init" in _run_expecting_challenge("today")
+    assert "hone db init" in _run_expecting_challenge("today")
 
 
 def test_outdated_schema_asks_for_db_init(db_path: Path, content_dir: Path) -> None:
@@ -123,12 +123,12 @@ def test_api_errors_come_back_as_challenges(ready: None) -> None:
 def test_api_without_database_returns_challenge(db_path: Path) -> None:
     response = TestClient(api_app).get("/api/overview")
     assert response.status_code == 503
-    assert "formacao db init" in response.json()["challenge"]["next_step"]
+    assert "hone db init" in response.json()["challenge"]["next_step"]
 
 
 def test_dashboard_and_theme_are_served(ready: None) -> None:
     client = TestClient(api_app)
-    assert "formação" in client.get("/").text
+    assert "autonomia" in client.get("/").text
     tokens = client.get("/theme/tokens.css")
     assert tokens.headers["content-type"].startswith("text/css")
     assert "--accent:" in tokens.text

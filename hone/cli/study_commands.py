@@ -5,7 +5,7 @@ from rich.markdown import Markdown
 from rich.rule import Rule
 from rich.table import Table
 
-from formacao.cli.console import (
+from hone.cli.console import (
     challenges_as_exit,
     console,
     progress_bar,
@@ -13,12 +13,12 @@ from formacao.cli.console import (
     status_label,
     status_marker,
 )
-from formacao.core.clock import local_today, utc_now
-from formacao.core.workspace import open_workspace
-from formacao.engines.checkins import check_in, get_streak
-from formacao.engines.content import read_module_content
-from formacao.engines.overview import build_overview
-from formacao.engines.progress import (
+from hone.core.clock import local_today, utc_now
+from hone.core.workspace import open_workspace
+from hone.engines.checkins import check_in, get_streak
+from hone.engines.content import read_module_content
+from hone.engines.overview import build_overview
+from hone.engines.progress import (
     ModuleStatus,
     ModuleView,
     TrackView,
@@ -28,7 +28,7 @@ from formacao.engines.progress import (
     resolve_module,
     start_module,
 )
-from formacao.voice import (
+from hone.voice import (
     checkin_saved_message,
     module_completed_message,
     streak_message,
@@ -75,7 +75,7 @@ def today() -> None:
     console.print(f"[accent]{overview.streak.current}[/accent] {streak_message(overview.streak)}\n")
 
     if overview.todays_checkin is None:
-        console.print("Check-in: [warning]pendente[/warning] — [accent]formacao checkin[/accent]")
+        console.print("Check-in: [warning]pendente[/warning] — [accent]hone checkin[/accent]")
     else:
         console.print(
             f"Check-in: [ok]feito[/ok] — [muted]{overview.todays_checkin.intention}[/muted]"
@@ -87,7 +87,7 @@ def today() -> None:
         console.print(f"Sessão: [accent]rolando há {minutes} min[/accent] — {topic}")
 
     if not overview.tracks:
-        console.print("\nNenhuma trilha carregada. Rode [accent]formacao content sync[/accent].")
+        console.print("\nNenhuma trilha carregada. Rode [accent]hone content sync[/accent].")
         return
 
     if overview.next_modules:
@@ -115,21 +115,21 @@ def tracks() -> None:
     with challenges_as_exit(), open_workspace() as workspace:
         track_views = list_track_views(workspace.conn, workspace.user_id)
     if not track_views:
-        console.print("Nenhuma trilha carregada. Rode [accent]formacao content sync[/accent].")
+        console.print("Nenhuma trilha carregada. Rode [accent]hone content sync[/accent].")
         return
     _print_track_progress(track_views)
-    console.print("\nDetalhes: [accent]formacao track <trilha>[/accent]")
+    console.print("\nDetalhes: [accent]hone track <trilha>[/accent]")
 
 
 def track(
-    slug: str = typer.Argument(..., help="Identificador da trilha (ex.: fundamentos-cs)."),
+    slug: str = typer.Argument(..., help="Identificador da trilha (ex.: cs-fundamentals)."),
 ) -> None:
     with challenges_as_exit(), open_workspace() as workspace:
         view = find_track_view(workspace.conn, workspace.user_id, slug)
     if view is None:
         console.print(f"[challenge]Desafio:[/challenge] não achei a trilha “{slug}”.")
         console.print(
-            "[muted]Próximo passo:[/muted] veja as trilhas com [accent]formacao tracks[/accent]."
+            "[muted]Próximo passo:[/muted] veja as trilhas com [accent]hone tracks[/accent]."
         )
         raise typer.Exit(code=1)
 
@@ -145,12 +145,12 @@ def track(
         if module.missing_prerequisites:
             missing = ", ".join(link.title for link in module.missing_prerequisites)
             console.print(f"    [muted]precisa de: {missing}[/muted]")
-    console.print("\nPara estudar: [accent]formacao read <módulo>[/accent]")
+    console.print("\nPara estudar: [accent]hone read <módulo>[/accent]")
 
 
 def read(
     module: str = typer.Argument(
-        ..., help="Módulo a abrir (ex.: recursao ou fundamentos-cs/recursao)."
+        ..., help="Módulo a abrir (ex.: recursion ou cs-fundamentals/recursion)."
     ),
 ) -> None:
     with challenges_as_exit(), open_workspace() as workspace:
@@ -161,12 +161,11 @@ def read(
     console.print(Markdown(text))
     console.print(Rule(style="muted"))
     console.print(
-        "Respondeu a recuperação ativa sem olhar? "
-        f"Então: [accent]formacao done {target.key}[/accent]"
+        f"Respondeu a recuperação ativa sem olhar? Então: [accent]hone done {target.key}[/accent]"
     )
 
 
-def done(module: str = typer.Argument(..., help="Módulo concluído (ex.: recursao).")) -> None:
+def done(module: str = typer.Argument(..., help="Módulo concluído (ex.: recursion).")) -> None:
     with challenges_as_exit(), open_workspace() as workspace:
         target = resolve_module(workspace.conn, workspace.user_id, module)
         already_completed = target.status is ModuleStatus.COMPLETED

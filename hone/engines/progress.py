@@ -6,8 +6,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum
 
-from formacao.core.clock import to_iso_utc
-from formacao.engines.content import MODULE_KEY_SEPARATOR, module_key
+from hone.core.clock import to_iso_utc
+from hone.engines.content import MODULE_KEY_SEPARATOR, module_key
 
 
 class ModuleStatus(StrEnum):

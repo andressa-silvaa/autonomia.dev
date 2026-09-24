@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from formacao.core.db import (
+from hone.core.db import (
     MigrationError,
     connect,
     discover_migrations,
@@ -14,8 +14,8 @@ from formacao.core.db import (
     schema_version,
     table_counts,
 )
-from formacao.core.models import Mastery
-from formacao.core.users import ensure_default_user
+from hone.core.models import Mastery
+from hone.core.users import ensure_default_user
 
 EXPECTED_TABLES = {
     "users",

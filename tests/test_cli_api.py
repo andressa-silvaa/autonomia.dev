@@ -6,8 +6,8 @@ import pytest
 from fastapi.testclient import TestClient
 from typer.testing import CliRunner
 
-from formacao.api.app import app as api_app
-from formacao.cli.app import app as cli_app
+from hone.api.app import app as api_app
+from hone.cli.app import app as cli_app
 
 runner = CliRunner()
 
@@ -15,7 +15,7 @@ runner = CliRunner()
 def test_db_status_without_database_suggests_init(db_path: Path) -> None:
     result = runner.invoke(cli_app, ["db", "status"])
     assert result.exit_code == 1
-    assert "formacao db init" in result.output
+    assert "hone db init" in result.output
 
 
 def test_db_init_then_status(db_path: Path) -> None:
@@ -56,7 +56,7 @@ def test_unwritable_database_path_becomes_a_challenge(
 ) -> None:
     blocking_file = tmp_path / "not_a_folder"
     blocking_file.write_text("", encoding="utf-8")
-    monkeypatch.setenv("FORMACAO_DB_PATH", str(blocking_file / "db.sqlite"))
+    monkeypatch.setenv("HONE_DB_PATH", str(blocking_file / "db.sqlite"))
     result = runner.invoke(cli_app, ["db", "init"])
     assert result.exit_code == 1
     assert "Desafio" in result.output

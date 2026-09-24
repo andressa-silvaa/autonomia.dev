@@ -5,15 +5,15 @@ from datetime import UTC, date, datetime, timedelta
 
 import pytest
 
-from formacao.core.clock import local_date_of
-from formacao.engines.checkins import (
+from hone.core.clock import local_date_of
+from hone.engines.checkins import (
     AlreadyCheckedInError,
     EmptyIntentionError,
     check_in,
     compute_streak,
     get_streak,
 )
-from formacao.engines.sessions import (
+from hone.engines.sessions import (
     ActiveSessionExistsError,
     NoActiveSessionError,
     find_active_session,

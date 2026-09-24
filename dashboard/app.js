@@ -1,6 +1,6 @@
 "use strict";
 
-const THEME_STORAGE_KEY = "formacao-theme";
+const THEME_STORAGE_KEY = "hone-theme";
 const THEME_SEQUENCE = ["auto", "light", "dark"];
 const THEME_LABELS = { auto: "tema: automático", light: "tema: claro", dark: "tema: escuro" };
 const STATUS_MARKERS = { completed: "✔", in_progress: "▶", available: "○", locked: "·" };
@@ -8,7 +8,7 @@ const WEEKDAY_FORMAT = new Intl.DateTimeFormat("pt-BR", { weekday: "short", day:
 const LONG_DATE_FORMAT = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "numeric", month: "long" });
 const API_UNREACHABLE = {
   problem: "a API não respondeu.",
-  next_step: "confira se o terminal com formacao serve ainda está rodando.",
+  next_step: "confira se o terminal com hone serve ainda está rodando.",
 };
 
 const view = document.getElementById("view");
@@ -104,7 +104,7 @@ function capitalize(text) {
 }
 
 function moduleHref(module) {
-  return `#/trilhas/${module.track_slug}/${module.slug}`;
+  return `#/tracks/${module.track_slug}/${module.slug}`;
 }
 
 function progressBar(done, total, label) {
@@ -122,7 +122,7 @@ function trackProgressList(tracks) {
     {},
     tracks.map((track) =>
       el("div", { className: "progress-row" }, [
-        el("a", { href: `#/trilhas/${track.slug}`, text: track.name }),
+        el("a", { href: `#/tracks/${track.slug}`, text: track.name }),
         progressBar(track.completed, track.total, `Progresso em ${track.name}`),
         el("span", { className: "progress-count", text: `${track.completed}/${track.total}` }),
       ]),
@@ -181,7 +181,7 @@ function statusChips(overview) {
   if (overview.todays_checkin) {
     chips.push(el("span", { className: "chip chip-ok", text: `check-in feito: ${overview.todays_checkin.intention}` }));
   } else {
-    chips.push(el("span", { className: "chip chip-pending" }, ["check-in pendente — ", el("code", { text: "formacao checkin" })]));
+    chips.push(el("span", { className: "chip chip-pending" }, ["check-in pendente — ", el("code", { text: "hone checkin" })]));
   }
   if (overview.active_session) {
     const topic = overview.active_session.module_title || "estudo livre";
@@ -206,7 +206,7 @@ async function renderToday() {
   ];
 
   if (overview.tracks.length === 0) {
-    content.push(renderChallenge({ problem: "nenhuma trilha carregada ainda.", next_step: "rode formacao content sync no terminal." }));
+    content.push(renderChallenge({ problem: "nenhuma trilha carregada ainda.", next_step: "rode hone content sync no terminal." }));
     return content;
   }
   if (overview.next_modules.length) {
@@ -222,14 +222,14 @@ async function renderTracks() {
   return [
     el("h1", { text: "Trilhas" }),
     el("p", { className: "lead", text: "Cada uma é um caminho, não uma lista de tarefas." }),
-    el("section", { className: "section" }, tracks.length ? trackProgressList(tracks) : el("p", { className: "muted", text: "Nenhuma trilha carregada. Rode formacao content sync." })),
+    el("section", { className: "section" }, tracks.length ? trackProgressList(tracks) : el("p", { className: "muted", text: "Nenhuma trilha carregada. Rode hone content sync." })),
   ];
 }
 
 async function renderTrack(trackSlug) {
   const track = await fetchJson(`/api/tracks/${encodeURIComponent(trackSlug)}`);
   return [
-    el("div", { className: "breadcrumb" }, el("a", { href: "#/trilhas", text: "Trilhas" })),
+    el("div", { className: "breadcrumb" }, el("a", { href: "#/tracks", text: "Trilhas" })),
     el("h1", { text: track.name }),
     el("p", { className: "lead", text: track.description }),
     el("section", { className: "section" }, [
@@ -246,16 +246,16 @@ function moduleCallout(module) {
   }
   return el("div", { className: "callout" }, [
     "Estude pelo terminal para registrar a sessão: ",
-    el("code", { text: `formacao session start ${module.slug}` }),
+    el("code", { text: `hone session start ${module.slug}` }),
     ". Respondeu a recuperação ativa sem olhar? ",
-    el("code", { text: `formacao done ${module.key}` }),
+    el("code", { text: `hone done ${module.key}` }),
   ]);
 }
 
 async function renderModule(trackSlug, moduleSlug) {
   const module = await fetchJson(`/api/tracks/${encodeURIComponent(trackSlug)}/modules/${encodeURIComponent(moduleSlug)}`);
   const header = [
-    el("div", { className: "breadcrumb" }, [el("a", { href: "#/trilhas", text: "Trilhas" }), " / ", el("a", { href: `#/trilhas/${module.track_slug}`, text: module.track_name })]),
+    el("div", { className: "breadcrumb" }, [el("a", { href: "#/tracks", text: "Trilhas" }), " / ", el("a", { href: `#/tracks/${module.track_slug}`, text: module.track_name })]),
     el("h1", { text: module.title }),
     el("p", { className: "lead", text: `${module.status_label} · ${module.summary}` }),
   ];
@@ -270,9 +270,9 @@ async function renderModule(trackSlug, moduleSlug) {
 
 function currentRoute() {
   const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
-  if (parts[0] === "trilhas" && parts.length === 3) return { nav: "tracks", render: () => renderModule(parts[1], parts[2]) };
-  if (parts[0] === "trilhas" && parts.length === 2) return { nav: "tracks", render: () => renderTrack(parts[1]) };
-  if (parts[0] === "trilhas") return { nav: "tracks", render: renderTracks };
+  if (parts[0] === "tracks" && parts.length === 3) return { nav: "tracks", render: () => renderModule(parts[1], parts[2]) };
+  if (parts[0] === "tracks" && parts.length === 2) return { nav: "tracks", render: () => renderTrack(parts[1]) };
+  if (parts[0] === "tracks") return { nav: "tracks", render: renderTracks };
   return { nav: "today", render: renderToday };
 }
 

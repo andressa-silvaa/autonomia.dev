@@ -5,7 +5,7 @@ from datetime import UTC, datetime
 
 import pytest
 
-from formacao.engines.progress import (
+from hone.engines.progress import (
     AmbiguousModuleError,
     ModuleLockedError,
     ModuleStatus,

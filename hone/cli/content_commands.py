@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import typer
 
-from formacao.cli.console import challenges_as_exit, console, say_ok
-from formacao.core.workspace import open_workspace
-from formacao.engines.content import load_content, sync_content
+from hone.cli.console import challenges_as_exit, console, say_ok
+from hone.core.workspace import open_workspace
+from hone.engines.content import load_content, sync_content
 
 content_app = typer.Typer(help="Conteúdo das trilhas (arquivos em data/).", no_args_is_help=True)
 
@@ -28,4 +28,4 @@ def content_sync() -> None:
         )
         for key in report.orphan_modules:
             console.print(f"  [muted]{key}[/muted]")
-    console.print("Próximo passo: [accent]formacao tracks[/accent] para ver por onde começar.")
+    console.print("Próximo passo: [accent]hone tracks[/accent] para ver por onde começar.")

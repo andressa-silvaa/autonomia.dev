@@ -4,7 +4,7 @@ import sqlite3
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 
-from formacao.core.clock import to_iso_utc
+from hone.core.clock import to_iso_utc
 
 ONE_DAY = timedelta(days=1)
 

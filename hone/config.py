@@ -26,15 +26,15 @@ def _parse_port(port_text: str) -> int:
     try:
         return int(port_text)
     except ValueError as exc:
-        raise ValueError(f"FORMACAO_API_PORT must be a number, got {port_text!r}") from exc
+        raise ValueError(f"HONE_API_PORT must be a number, got {port_text!r}") from exc
 
 
 def load_settings() -> Settings:
     load_dotenv(PROJECT_ROOT / ".env", override=False)
     return Settings(
-        db_path=_resolve_from_project_root(Path(os.getenv("FORMACAO_DB_PATH", "data/formacao.db"))),
-        content_dir=_resolve_from_project_root(Path(os.getenv("FORMACAO_CONTENT_DIR", "data"))),
-        user_name=os.getenv("FORMACAO_USER_NAME", "Estudante"),
-        api_host=os.getenv("FORMACAO_API_HOST", "127.0.0.1"),
-        api_port=_parse_port(os.getenv("FORMACAO_API_PORT", "8000")),
+        db_path=_resolve_from_project_root(Path(os.getenv("HONE_DB_PATH", "data/hone.db"))),
+        content_dir=_resolve_from_project_root(Path(os.getenv("HONE_CONTENT_DIR", "data"))),
+        user_name=os.getenv("HONE_USER_NAME", "Estudante"),
+        api_host=os.getenv("HONE_API_HOST", "127.0.0.1"),
+        api_port=_parse_port(os.getenv("HONE_API_PORT", "8000")),
     )

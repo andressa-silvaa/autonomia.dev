@@ -4,13 +4,13 @@ import webbrowser
 
 import typer
 
-from formacao import __version__
-from formacao.cli import study_commands
-from formacao.cli.console import console
-from formacao.cli.content_commands import content_app
-from formacao.cli.db_commands import db_app
-from formacao.cli.session_commands import session_app
-from formacao.config import load_settings
+from hone import __version__
+from hone.cli import study_commands
+from hone.cli.console import console
+from hone.cli.content_commands import content_app
+from hone.cli.db_commands import db_app
+from hone.cli.session_commands import session_app
+from hone.config import load_settings
 
 app = typer.Typer(
     help="Sistema Pessoal de Formação em TI.",
@@ -25,7 +25,7 @@ study_commands.register(app)
 
 def _show_version(value: bool) -> None:
     if value:
-        console.print(f"formacao [accent]{__version__}[/accent]")
+        console.print(f"hone [accent]{__version__}[/accent]")
         raise typer.Exit()
 
 
@@ -50,6 +50,4 @@ def serve(
     console.print(f"Dashboard em [accent]{url}[/accent] [muted](Ctrl+C para parar)[/muted]")
     if open_browser:
         webbrowser.open(url)
-    uvicorn.run(
-        "formacao.api.app:app", host=settings.api_host, port=settings.api_port, reload=reload
-    )
+    uvicorn.run("hone.api.app:app", host=settings.api_host, port=settings.api_port, reload=reload)

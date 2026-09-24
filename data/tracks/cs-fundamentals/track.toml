@@ -1,0 +1,68 @@
+[track]
+slug = "cs-fundamentals"
+name = "Fundamentos de CS"
+description = "A base que não muda com o framework da moda: como o computador executa, memória, estruturas de dados e algoritmos."
+
+[[modules]]
+slug = "how-computers-run-programs"
+title = "Como o computador executa um programa"
+summary = "CPU, memória, compilação, interpretação e processos."
+content = "01-how-computers-run-programs.md"
+requires = []
+competencies = ["program-execution"]
+
+[[modules]]
+slug = "data-representation"
+title = "Representação de dados"
+summary = "Binário, hexadecimal, inteiros, ponto flutuante e UTF-8."
+content = "02-data-representation.md"
+requires = ["how-computers-run-programs"]
+competencies = ["data-representation"]
+
+[[modules]]
+slug = "stack-and-heap-memory"
+title = "Memória: stack e heap"
+summary = "Stack frames, heap, valor versus referência e garbage collector."
+content = "03-stack-and-heap-memory.md"
+requires = ["how-computers-run-programs"]
+competencies = ["memory-model"]
+
+[[modules]]
+slug = "big-o-complexity"
+title = "Complexidade de algoritmos (Big-O)"
+summary = "Medir crescimento, não segundos."
+content = "04-big-o-complexity.md"
+requires = ["how-computers-run-programs"]
+competencies = ["complexity-analysis"]
+
+[[modules]]
+slug = "linear-data-structures"
+title = "Estruturas lineares"
+summary = "Arrays, listas ligadas, pilhas e filas."
+content = "05-linear-data-structures.md"
+requires = ["stack-and-heap-memory", "big-o-complexity"]
+competencies = ["linear-data-structures"]
+
+[[modules]]
+slug = "hash-tables"
+title = "Tabelas hash"
+summary = "Dicionários e conjuntos por dentro."
+content = "06-hash-tables.md"
+requires = ["linear-data-structures", "data-representation"]
+competencies = ["hash-tables"]
+
+[[modules]]
+slug = "recursion"
+title = "Recursão"
+summary = "Caso base, pilha de chamadas e memoização."
+content = "07-recursion.md"
+requires = ["stack-and-heap-memory"]
+competencies = ["recursion"]
+
+[[modules]]
+slug = "searching-and-sorting"
+title = "Busca e ordenação"
+summary = "Busca binária, merge sort e o que a biblioteca padrão faz."
+content = "08-searching-and-sorting.md"
+requires = ["big-o-complexity", "linear-data-structures", "recursion"]
+competencies = ["searching-and-sorting"]

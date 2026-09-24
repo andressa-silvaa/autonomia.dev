@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from formacao.ui_palette import BODY_FONT, DARK_THEME, HEADING_FONT, LIGHT_THEME, MONO_FONT
+from hone.ui_palette import BODY_FONT, DARK_THEME, HEADING_FONT, LIGHT_THEME, MONO_FONT
 
 
 def _declarations(tokens: dict[str, str]) -> str:

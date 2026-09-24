@@ -5,8 +5,8 @@ from collections import defaultdict
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 
-from formacao.core.clock import local_date_of, parse_iso_utc, to_iso_utc
-from formacao.engines.content import module_key
+from hone.core.clock import local_date_of, parse_iso_utc, to_iso_utc
+from hone.engines.content import module_key
 
 SECONDS_PER_MINUTE = 60
 

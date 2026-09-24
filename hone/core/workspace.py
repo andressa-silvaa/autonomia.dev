@@ -6,10 +6,10 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 
-from formacao.config import Settings, load_settings
-from formacao.core.db import connect, latest_version, schema_version
-from formacao.core.models import User
-from formacao.core.users import get_primary_user
+from hone.config import Settings, load_settings
+from hone.core.db import connect, latest_version, schema_version
+from hone.core.models import User
+from hone.core.users import get_primary_user
 
 
 class DatabaseMissingError(Exception):

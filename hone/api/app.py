@@ -7,17 +7,17 @@ from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from rich.text import Text
 
-from formacao import __version__
-from formacao.api.routes import router
-from formacao.api.schemas import ChallengeOut
-from formacao.api.theme import build_tokens_css
-from formacao.config import PROJECT_ROOT, load_settings
-from formacao.core.db import connect, latest_version, schema_version
-from formacao.core.users import UserNotFoundError
-from formacao.core.workspace import DatabaseMissingError, SchemaOutdatedError
-from formacao.engines.content import ContentFileMissingError
-from formacao.engines.progress import AmbiguousModuleError, UnknownModuleError
-from formacao.voice import challenge_for
+from hone import __version__
+from hone.api.routes import router
+from hone.api.schemas import ChallengeOut
+from hone.api.theme import build_tokens_css
+from hone.config import PROJECT_ROOT, load_settings
+from hone.core.db import connect, latest_version, schema_version
+from hone.core.users import UserNotFoundError
+from hone.core.workspace import DatabaseMissingError, SchemaOutdatedError
+from hone.engines.content import ContentFileMissingError
+from hone.engines.progress import AmbiguousModuleError, UnknownModuleError
+from hone.voice import challenge_for
 
 DASHBOARD_DIR = PROJECT_ROOT / "dashboard"
 
@@ -30,7 +30,7 @@ CHALLENGE_STATUS_CODES: dict[type[Exception], int] = {
     AmbiguousModuleError: 409,
 }
 
-app = FastAPI(title="Formação em TI", version=__version__)
+app = FastAPI(title="autonomia.dev", version=__version__)
 app.include_router(router)
 app.mount("/static", StaticFiles(directory=DASHBOARD_DIR), name="dashboard")
 

@@ -4,9 +4,9 @@ import sqlite3
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 
-from formacao.engines.checkins import Checkin, Streak, find_checkin, get_streak
-from formacao.engines.progress import ModuleStatus, ModuleView, TrackView, list_track_views
-from formacao.engines.sessions import SessionView, find_active_session, study_minutes_by_day
+from hone.engines.checkins import Checkin, Streak, find_checkin, get_streak
+from hone.engines.progress import ModuleStatus, ModuleView, TrackView, list_track_views
+from hone.engines.sessions import SessionView, find_active_session, study_minutes_by_day
 
 DEFAULT_HISTORY_DAYS = 14
 MAX_NEXT_MODULES = 3

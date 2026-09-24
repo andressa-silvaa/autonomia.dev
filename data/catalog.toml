@@ -1,5 +1,5 @@
 [[areas]]
-slug = "fundamentos"
+slug = "fundamentals"
 name = "Fundamentos de computação"
 description = "Como o computador funciona, estruturas de dados e algoritmos."
 
@@ -19,7 +19,7 @@ name = "Mobile"
 description = "Aplicativos para Android e iOS."
 
 [[areas]]
-slug = "banco-de-dados"
+slug = "databases"
 name = "Bancos de dados"
 description = "Modelagem, SQL, NoSQL, índices, transações e cache."
 
@@ -29,7 +29,7 @@ name = "Cloud"
 description = "Serviços gerenciados, custos, rede e segurança em nuvem."
 
 [[areas]]
-slug = "infra"
+slug = "infrastructure"
 name = "Infraestrutura"
 description = "Containers, servidores, rede e provisionamento."
 
@@ -39,7 +39,7 @@ name = "DevOps"
 description = "CI/CD, automação, entrega contínua e cultura de operação."
 
 [[areas]]
-slug = "arquitetura"
+slug = "software-architecture"
 name = "Arquitetura de software"
 description = "Organização de código, padrões, camadas e decisões de design."
 
@@ -49,32 +49,32 @@ name = "System design"
 description = "Sistemas distribuídos, escala, consistência e trade-offs."
 
 [[areas]]
-slug = "seguranca"
+slug = "security"
 name = "Segurança"
 description = "Ameaças, autenticação, autorização e desenvolvimento seguro."
 
 [[areas]]
-slug = "ia-ml"
+slug = "ai-ml"
 name = "IA e machine learning"
 description = "Modelos, treino, avaliação e uso responsável."
 
 [[areas]]
-slug = "llms-agentes"
+slug = "llms-agents"
 name = "LLMs e agentes"
 description = "Prompting, RAG, tool calling, MCP, agentes e avaliação."
 
 [[areas]]
-slug = "dados"
+slug = "data"
 name = "Dados"
 description = "Pipelines, modelagem analítica e processamento de dados."
 
 [[areas]]
-slug = "testes"
+slug = "testing"
 name = "Testes"
 description = "Testes unitários, de integração, end-to-end e estratégia de testes."
 
 [[areas]]
-slug = "observabilidade"
+slug = "observability"
 name = "Observabilidade"
 description = "Logs, métricas, traces e resposta a incidentes."
 
@@ -84,59 +84,59 @@ name = "Git"
 description = "Versionamento, branches, histórico e colaboração."
 
 [[areas]]
-slug = "so-redes"
+slug = "os-networking"
 name = "Sistemas operacionais e redes"
 description = "Processos, memória, arquivos, TCP/IP, HTTP e DNS."
 
 [[areas]]
-slug = "comunicacao-tecnica"
+slug = "technical-communication"
 name = "Comunicação técnica"
 description = "Documentação, ADRs, RFCs, PRs e apresentação de decisões."
 
 [[competencies]]
-slug = "execucao-de-programas"
-area = "fundamentos"
+slug = "program-execution"
+area = "fundamentals"
 name = "Execução de programas"
 description = "Explicar o caminho do código-fonte até a CPU."
 
 [[competencies]]
-slug = "representacao-de-dados"
-area = "fundamentos"
+slug = "data-representation"
+area = "fundamentals"
 name = "Representação de dados"
 description = "Binário, hexadecimal, inteiros, ponto flutuante e texto."
 
 [[competencies]]
-slug = "modelo-de-memoria"
-area = "fundamentos"
+slug = "memory-model"
+area = "fundamentals"
 name = "Modelo de memória"
 description = "Stack, heap, valor versus referência e garbage collector."
 
 [[competencies]]
-slug = "analise-de-complexidade"
-area = "fundamentos"
+slug = "complexity-analysis"
+area = "fundamentals"
 name = "Análise de complexidade"
 description = "Estimar tempo e espaço de um algoritmo com Big-O."
 
 [[competencies]]
-slug = "estruturas-lineares"
-area = "fundamentos"
+slug = "linear-data-structures"
+area = "fundamentals"
 name = "Estruturas lineares"
 description = "Arrays, listas, pilhas e filas: quando usar cada uma."
 
 [[competencies]]
-slug = "tabelas-hash"
-area = "fundamentos"
+slug = "hash-tables"
+area = "fundamentals"
 name = "Tabelas hash"
 description = "Dicionários e conjuntos: funcionamento e custo."
 
 [[competencies]]
-slug = "recursao"
-area = "fundamentos"
+slug = "recursion"
+area = "fundamentals"
 name = "Recursão"
 description = "Resolver problemas dividindo em versões menores de si mesmos."
 
 [[competencies]]
-slug = "busca-e-ordenacao"
-area = "fundamentos"
+slug = "searching-and-sorting"
+area = "fundamentals"
 name = "Busca e ordenação"
 description = "Busca binária, algoritmos de ordenação e seus custos."

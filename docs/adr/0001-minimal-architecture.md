@@ -39,7 +39,7 @@ O SQLite guarda um número inteiro no cabeçalho do arquivo do banco, e ele é u
 
 ### 5. Engines como módulos, não serviços
 
-`formacao/engines/` vai recebendo um módulo por fase (learning, knowledge, exercise…). Regra de dependência: `core` nunca importa engines, e CLI/API usam engines, nunca o contrário.
+`hone/engines/` vai recebendo um módulo por fase (learning, knowledge, exercise…). Regra de dependência: `core` nunca importa engines, e CLI/API usam engines, nunca o contrário.
 
 ### 6. Docker Compose com profiles
 
@@ -47,7 +47,7 @@ Cada serviço (SQL Server, Oracle, MongoDB, Redis, RabbitMQ, Kafka) fica num pro
 
 ### 7. Identidade visual centralizada
 
-`formacao/ui_palette.py` é a fonte única das cores: coral `#F0643C` como assinatura da marca, verde-azulado `#2A9D8F` como cor fria complementar, mostarda para alertas e um neutro para o que deve recuar. O CLI usa essas cores por nome de estilo; o dashboard vai reutilizar os mesmos valores como CSS variables. Os erros aparecem como "Desafio" + "Próximo passo", nunca como traceback cru.
+`hone/ui_palette.py` é a fonte única das cores: coral `#F0643C` como assinatura da marca, verde-azulado `#2A9D8F` como cor fria complementar, mostarda para alertas e um neutro para o que deve recuar. O CLI usa essas cores por nome de estilo; o dashboard vai reutilizar os mesmos valores como CSS variables. Os erros aparecem como "Desafio" + "Próximo passo", nunca como traceback cru.
 
 ### 8. Código em inglês e sem comentários
 
@@ -55,7 +55,7 @@ Esta decisão foi tomada pela criadora e substitui a regra 6 do documento de req
 
 ### 9. Agendamento pelo Agendador de Tarefas do Windows
 
-O documento de requisitos cita cron (Linux), mas o sistema roda no Windows. As tarefas agendadas (briefing diário, lembrete de check-in) vão usar o Agendador de Tarefas, registradas via `schtasks` e chamando comandos `formacao`. A lógica fica toda no CLI, então trocar de agendador no futuro não exige mudar código.
+O documento de requisitos cita cron (Linux), mas o sistema roda no Windows. As tarefas agendadas (briefing diário, lembrete de check-in) vão usar o Agendador de Tarefas, registradas via `schtasks` e chamando comandos `hone`. A lógica fica toda no CLI, então trocar de agendador no futuro não exige mudar código.
 
 ### 10. O documento de requisitos fica fora do Git
 

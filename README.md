@@ -1,8 +1,8 @@
-# Formação em TI
+# autonomia.dev
 
 Sistema pessoal de formação de desenvolvedores. Ele não mede só conteúdo concluído: mede competência e autonomia, para responder a pergunta **"eu consigo resolver problemas de programação e engenharia sem ajuda?"**.
 
-Tudo roda local e de graça: Python, SQLite, Docker e Ollama.
+Tudo roda local e de graça: Python, SQLite, Docker e Ollama. O comando do terminal e o pacote Python se chamam `hone` (afiar habilidades).
 
 ## Status
 
@@ -28,13 +28,13 @@ pip install -e ".[dev]"
 copy .env.example .env          # Linux/macOS: cp .env.example .env
 ```
 
-Edite o `.env`: coloque seu nome em `FORMACAO_USER_NAME` e troque as senhas dos containers.
+Edite o `.env`: coloque seu nome em `HONE_USER_NAME` e troque as senhas dos containers.
 
 ## Banco de dados
 
 ```powershell
-formacao db init      # cria data/formacao.db e aplica as migrações
-formacao db status    # versão do schema e linhas por tabela
+hone db init      # cria data/hone.db e aplica as migrações
+hone db status    # versão do schema e linhas por tabela
 ```
 
 `db init` pode ser rodado quantas vezes você quiser: ele só aplica o que estiver pendente. Rode de novo sempre que atualizar o código.
@@ -42,23 +42,23 @@ formacao db status    # versão do schema e linhas por tabela
 ## Estudando
 
 ```powershell
-formacao content sync                 # carrega as trilhas de data/ no banco
-formacao checkin                      # "o que você vai estudar hoje?"
-formacao today                        # streak, check-in, sessão e o que estudar agora
-formacao tracks                       # progresso em cada trilha
-formacao track fundamentos-cs         # módulos, status e pré-requisitos
-formacao session start recursao       # cronometra uma sessão (e marca o módulo como "estudando")
-formacao read recursao                # abre o conteúdo no terminal
-formacao session stop -n "o que aprendi"
-formacao done recursao                # conclui o módulo e mostra o que destravou
+hone content sync                 # carrega as trilhas de data/ no banco
+hone checkin                      # "o que você vai estudar hoje?"
+hone today                        # streak, check-in, sessão e o que estudar agora
+hone tracks                       # progresso em cada trilha
+hone track cs-fundamentals         # módulos, status e pré-requisitos
+hone session start recursion       # cronometra uma sessão (e marca o módulo como "estudando")
+hone read recursion                # abre o conteúdo no terminal
+hone session stop -n "o que aprendi"
+hone done recursion                # conclui o módulo e mostra o que destravou
 ```
 
-Um módulo só abre quando todos os pré-requisitos estão concluídos. Os módulos podem ser chamados pelo nome curto (`recursao`) ou pelo nome completo (`fundamentos-cs/recursao`).
+Um módulo só abre quando todos os pré-requisitos estão concluídos. Os módulos podem ser chamados pelo nome curto (`recursion`) ou pelo nome completo (`cs-fundamentals/recursion`).
 
 ## Dashboard
 
 ```powershell
-formacao serve --open
+hone serve --open
 ```
 
 O dashboard mostra o streak, o check-in, o tempo de estudo dos últimos 14 dias, o progresso nas trilhas e o conteúdo dos módulos. Ele é só para leitura: registrar sessões e concluir módulos continua no CLI. O tema segue o sistema operacional e pode ser trocado no botão do topo.
@@ -79,21 +79,21 @@ Exemplo de módulo no `track.toml`:
 
 ```toml
 [[modules]]
-slug = "recursao"
+slug = "recursion"
 title = "Recursão"
 summary = "Caso base, pilha de chamadas e memoização."
-content = "07-recursao.md"
-requires = ["memoria-stack-e-heap"]
-competencies = ["recursao"]
+content = "07-recursion.md"
+requires = ["stack-and-heap-memory"]
+competencies = ["recursion"]
 ```
 
-- `requires` aceita módulos da mesma trilha (`"recursao"`) ou de outra (`"outra-trilha/modulo"`).
-- `formacao content sync` valida tudo antes de gravar: pré-requisitos inexistentes, ciclos, arquivos faltando, competências desconhecidas. Se algo estiver errado, ele lista todos os problemas e não grava nada.
+- `requires` aceita módulos da mesma trilha (`"recursion"`) ou de outra (`"outra-trilha/modulo"`).
+- `hone content sync` valida tudo antes de gravar: pré-requisitos inexistentes, ciclos, arquivos faltando, competências desconhecidas. Se algo estiver errado, ele lista todos os problemas e não grava nada.
 - Remover um módulo do arquivo não apaga o seu progresso no banco. O sync só avisa que o módulo ficou órfão.
 
 ## API local
 
-Com `formacao serve` rodando, a documentação da API fica em http://127.0.0.1:8000/docs, e o endpoint `/health` diz se o banco está em dia.
+Com `hone serve` rodando, a documentação da API fica em http://127.0.0.1:8000/docs, e o endpoint `/health` diz se o banco está em dia.
 
 ## Containers das trilhas
 
@@ -106,7 +106,7 @@ docker compose --env-file .env -f docker/compose.yaml --profile redis down
 
 Profiles disponíveis: `sqlserver`, `oracle`, `mongo`, `redis`, `rabbitmq`, `kafka`.
 
-As portas só aceitam conexões de `127.0.0.1`, então nada fica exposto na rede. Os dados ficam em volumes nomeados; para apagar os dados de um serviço, use `docker volume rm formacao_<serviço>-data`.
+As portas só aceitam conexões de `127.0.0.1`, então nada fica exposto na rede. Os dados ficam em volumes nomeados; para apagar os dados de um serviço, use `docker volume rm hone_<serviço>-data`.
 
 ## Testes e qualidade
 
@@ -119,7 +119,7 @@ ruff format .
 ## Estrutura
 
 ```
-formacao/
+hone/
   core/          banco, migrações, entidades do domínio
     migrations/  arquivos NNNN_descricao.sql, aplicados em ordem
     workspace.py abre banco + usuária para CLI e API
@@ -152,10 +152,10 @@ As regras estão na skill `.claude/skills/code-style/SKILL.md`:
 
 ## Como criar uma migração
 
-1. Crie `formacao/core/migrations/0003_descricao.sql`, com o próximo número da sequência.
+1. Crie `hone/core/migrations/0003_descricao.sql`, com o próximo número da sequência.
 2. Não use `BEGIN`/`COMMIT`: o executor já roda o arquivo inteiro numa transação.
 3. Nunca edite uma migração que já foi aplicada; crie uma nova.
-4. Rode `formacao db init`.
+4. Rode `hone db init`.
 
 ## Ainda não coberto (fases futuras)
 

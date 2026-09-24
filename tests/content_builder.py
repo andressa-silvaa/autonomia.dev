@@ -4,12 +4,12 @@ from pathlib import Path
 
 SAMPLE_CATALOG = """
 [[areas]]
-slug = "fundamentos"
+slug = "fundamentals"
 name = "Fundamentos"
 
 [[competencies]]
-slug = "basico"
-area = "fundamentos"
+slug = "basics"
+area = "fundamentals"
 name = "Básico"
 """
 
@@ -23,7 +23,7 @@ description = "Usada nos testes."
 slug = "first"
 title = "Primeiro"
 content = "01-first.md"
-competencies = ["basico"]
+competencies = ["basics"]
 
 [[modules]]
 slug = "second"

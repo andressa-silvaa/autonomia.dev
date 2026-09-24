@@ -3,18 +3,18 @@ from __future__ import annotations
 import sqlite3
 from dataclasses import dataclass
 
-from formacao.core.users import UserNotFoundError
-from formacao.core.workspace import DatabaseMissingError, SchemaOutdatedError
-from formacao.engines.checkins import AlreadyCheckedInError, EmptyIntentionError, Streak
-from formacao.engines.content import ContentError, ContentFileMissingError
-from formacao.engines.progress import (
+from hone.core.users import UserNotFoundError
+from hone.core.workspace import DatabaseMissingError, SchemaOutdatedError
+from hone.engines.checkins import AlreadyCheckedInError, EmptyIntentionError, Streak
+from hone.engines.content import ContentError, ContentFileMissingError
+from hone.engines.progress import (
     AmbiguousModuleError,
     ModuleLink,
     ModuleLockedError,
     ModuleStatus,
     UnknownModuleError,
 )
-from formacao.engines.sessions import ActiveSessionExistsError, NoActiveSessionError
+from hone.engines.sessions import ActiveSessionExistsError, NoActiveSessionError
 
 MODULE_STATUS_LABELS = {
     ModuleStatus.LOCKED: "trancado",
@@ -88,7 +88,7 @@ def _challenge_for_module_error(error: Exception) -> Challenge | None:
         case UnknownModuleError():
             return Challenge(
                 f"não achei o módulo “{error.reference}”.",
-                "veja os nomes certinhos com [accent]formacao track <trilha>[/accent].",
+                "veja os nomes certinhos com [accent]hone track <trilha>[/accent].",
             )
         case AmbiguousModuleError():
             return Challenge(
@@ -109,12 +109,12 @@ def _challenge_for_study_error(error: Exception) -> Challenge | None:
             topic = f" em {error.session.module_title}" if error.session.module_title else ""
             return Challenge(
                 f"já tem uma sessão rolando{topic}.",
-                "encerre com [accent]formacao session stop[/accent] antes de abrir outra.",
+                "encerre com [accent]hone session stop[/accent] antes de abrir outra.",
             )
         case NoActiveSessionError():
             return Challenge(
                 "não tem nenhuma sessão aberta agora.",
-                "comece uma com [accent]formacao session start[/accent].",
+                "comece uma com [accent]hone session start[/accent].",
             )
         case AlreadyCheckedInError():
             return Challenge(
@@ -134,34 +134,33 @@ def _challenge_for_setup_error(error: Exception) -> Challenge | None:
         case DatabaseMissingError():
             return Challenge(
                 f"ainda não existe banco em {error.db_path}.",
-                "rode [accent]formacao db init[/accent].",
+                "rode [accent]hone db init[/accent].",
             )
         case SchemaOutdatedError():
             return Challenge(
                 f"o banco está na versão {error.current}, e o código já espera a {error.latest}.",
-                "rode [accent]formacao db init[/accent] para atualizar (seus dados continuam lá).",
+                "rode [accent]hone db init[/accent] para atualizar (seus dados continuam lá).",
             )
         case UserNotFoundError():
             return Challenge(
                 "o banco existe, mas ninguém está cadastrado nele.",
-                "rode [accent]formacao db init[/accent].",
+                "rode [accent]hone db init[/accent].",
             )
         case ContentError():
             return Challenge(
                 "o conteúdo das trilhas tem problemas:\n"
                 + "\n".join(f"  - {p}" for p in error.problems),
-                "corrija os arquivos em data/ e rode "
-                "[accent]formacao content sync[/accent] de novo.",
+                "corrija os arquivos em data/ e rode [accent]hone content sync[/accent] de novo.",
             )
         case ContentFileMissingError():
             return Challenge(
                 "o arquivo de conteúdo desse módulo sumiu.",
-                "confira data/tracks/ e rode [accent]formacao content sync[/accent].",
+                "confira data/tracks/ e rode [accent]hone content sync[/accent].",
             )
         case sqlite3.Error() | OSError():
             return Challenge(
                 f"não consegui acessar o banco ({error}).",
-                "confira FORMACAO_DB_PATH no .env e se você tem permissão de escrita na pasta.",
+                "confira HONE_DB_PATH no .env e se você tem permissão de escrita na pasta.",
             )
     return None
 

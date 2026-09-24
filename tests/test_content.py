@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from formacao.config import PROJECT_ROOT
-from formacao.engines.content import ContentError, load_content, sync_content
+from hone.config import PROJECT_ROOT
+from hone.engines.content import ContentError, load_content, sync_content
 from tests.content_builder import SAMPLE_TRACK, write_content
 
 REAL_CONTENT_DIR = PROJECT_ROOT / "data"
@@ -20,7 +20,7 @@ def _problems_for(root: Path) -> list[str]:
 
 def test_real_repository_content_is_valid() -> None:
     content = load_content(REAL_CONTENT_DIR)
-    assert any(track.slug == "fundamentos-cs" for track in content.tracks)
+    assert any(track.slug == "cs-fundamentals" for track in content.tracks)
     assert len(content.modules) >= 8
 
 
@@ -63,7 +63,7 @@ def test_folder_name_must_match_track_slug(tmp_path: Path) -> None:
 
 
 def test_unknown_competency_is_reported(tmp_path: Path) -> None:
-    track = SAMPLE_TRACK.replace('competencies = ["basico"]', 'competencies = ["nope"]')
+    track = SAMPLE_TRACK.replace('competencies = ["basics"]', 'competencies = ["nope"]')
     problems = _problems_for(write_content(tmp_path, tracks={"sample": track}))
     assert any("unknown competency 'nope'" in problem for problem in problems)
 
