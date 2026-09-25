@@ -1,3 +1,3 @@
-from hone.cli.app import app
+from hone.cli import app
 
 app()

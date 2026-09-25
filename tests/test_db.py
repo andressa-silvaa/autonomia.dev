@@ -38,6 +38,8 @@ EXPECTED_TABLES = {
     "diagnostic_answers",
     "mastery_events",
     "user_goals",
+    "exercise_progress",
+    "xp_events",
 }
 
 

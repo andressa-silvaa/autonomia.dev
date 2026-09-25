@@ -1,0 +1,16 @@
+title = "Do python app.py até a CPU"
+kind = "explanation"
+grading = "ollama"
+difficulty = 2
+required = true
+rubric = [
+  "Diz que o CPython traduz o código-fonte para bytecode antes de executar",
+  "Explica que a máquina virtual do Python executa o bytecode, uma instrução por vez",
+  "Deixa claro que a CPU só executa código de máquina, não Python nem bytecode",
+  "Compara com uma linguagem compilada (C# com IL e JIT, ou C) e aponta uma diferença real",
+  "Cita uma consequência prática, como desempenho, portabilidade ou quando o erro aparece",
+]
+hints = [
+  "Pense em três camadas: o texto que você escreveu, o que o CPython gera a partir dele e o que a CPU entende.",
+  "No C#, o dotnet build gera IL, e o JIT transforma IL em código de máquina na hora de rodar. Onde isso é parecido com o Python, e onde é diferente?",
+]

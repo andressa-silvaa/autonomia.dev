@@ -2,7 +2,7 @@
 
 Sistema pessoal de formação de desenvolvedores. Ele não mede só conteúdo concluído: mede competência e autonomia, para responder a pergunta **"eu consigo resolver problemas de programação e engenharia sem ajuda?"**.
 
-Tudo roda local e de graça: Python, SQLite, Docker e Ollama. O comando do terminal e o pacote Python se chamam `hone` (afiar habilidades).
+Tudo roda local e de graça: Python, SQLite, Docker e Ollama. O comando e o pacote Python se chamam `hone` (afiar habilidades).
 
 ## Status
 
@@ -11,16 +11,17 @@ Tudo roda local e de graça: Python, SQLite, Docker e Ollama. O comando do termi
 | 0 — Arquitetura mínima | ✅ entregue |
 | 1 — Núcleo de estudos | ✅ entregue |
 | 2 — Diagnóstico e mapa de conhecimento | ✅ entregue |
-| 3 — Engine de exercícios | próxima |
+| 3 — Engine de exercícios (e interface no navegador) | ✅ entregue |
+| 4 — Execução de código em Docker | próxima |
 
 ## Requisitos
 
 - Python 3.12+
 - Git
+- Ollama (opcional: corrige as respostas dissertativas; sem ele, elas vão de autoavaliação)
 - Docker Desktop (só para os serviços das trilhas)
-- Ollama (a partir da Fase 3/7; ainda não é necessário)
 
-## Instalação
+## Instalação (uma vez só)
 
 ```powershell
 python -m venv .venv
@@ -31,56 +32,54 @@ copy .env.example .env          # Linux/macOS: cp .env.example .env
 
 Edite o `.env`: coloque seu nome em `HONE_USER_NAME` e troque as senhas dos containers.
 
-## Banco de dados
+## Abrindo o sistema
 
 ```powershell
-hone db init      # cria data/hone.db e aplica as migrações
-hone db status    # versão do schema e linhas por tabela
+hone
 ```
 
-`db init` pode ser rodado quantas vezes você quiser: ele só aplica o que estiver pendente. Rode de novo sempre que atualizar o código.
+Pronto. O `hone` cria ou atualiza o banco, carrega as trilhas, as perguntas e os exercícios, e abre o sistema no navegador (http://127.0.0.1:8000). Deixe a janela do terminal aberta enquanto estuda; para sair, feche-a ou aperte Ctrl+C. Se você rodar `hone` com o sistema já aberto, ele só abre o navegador.
 
-## Estudando
+Sem terminal nenhum: dê dois cliques em `scripts/open-hone.cmd`. Dá para criar um atalho dele na área de trabalho (botão direito → Enviar para → Área de trabalho).
 
-```powershell
-hone content sync                 # carrega as trilhas de data/ no banco
-hone checkin                      # "o que você vai estudar hoje?"
-hone today                        # streak, check-in, sessão e o que estudar agora
-hone tracks                       # progresso em cada trilha
-hone track cs-fundamentals         # módulos, status e pré-requisitos
-hone session start recursion       # cronometra uma sessão (e marca o módulo como "estudando")
-hone read recursion                # abre o conteúdo no terminal
-hone session stop -n "o que aprendi"
-hone done recursion                # conclui o módulo e mostra o que destravou
-```
+Se algum arquivo de conteúdo estiver com problema, o `hone` não abre e mostra no terminal o que corrigir. Nada fica gravado pela metade.
 
-## Diagnóstico e mapa de conhecimento
+## O que dá para fazer no navegador
 
-```powershell
-hone diagnostic start              # perguntas sem consulta; digite "pausar" para parar e continuar depois
-hone diagnostic result             # resultado do último diagnóstico
-hone map                           # nível de domínio em cada competência
-hone goal searching-and-sorting    # define aonde você quer chegar (hone goal --clear remove)
-hone path                          # pré-requisitos que faltam, na ordem sugerida
-hone path recursion                # o mesmo, para qualquer módulo, sem mudar o objetivo
-hone gaps                          # lacunas: competências que ainda não estão firmes
-```
+- **Hoje**: check-in do dia, cronômetro de sessão de estudo (livre ou num módulo), streak, XP, o que estudar agora e os minutos dos últimos 14 dias.
+- **Trilhas**: módulos com pré-requisitos, conteúdo, exercícios e o botão de concluir. Um módulo só abre quando os pré-requisitos estão concluídos, e só pode ser concluído depois do exercício obrigatório.
+- **Exercícios**: enunciado, editor de código com "Rodar testes" (Tab indenta, Ctrl+Enter envia), respostas dissertativas, dicas (cada uma custa um pouco de XP) e histórico de tentativas. Marque "Usei IA nesta tentativa" quando for o caso: isso vira métrica de autonomia.
+- **Mapa**: diagnóstico (pode parar no meio), domínio por competência, objetivo, caminho até ele, lacunas e módulos por nível de pré-requisito.
+- **Métricas**: XP de competência e de atividade, e prática por competência (aprovados, de primeira, tentativas, dicas, uso de IA).
 
-Depois de cada resposta, o sistema pergunta se você sabia ou chutou. "Não sei" é resposta válida: é com ela que o mapa fica honesto. O diagnóstico vai no máximo até "consegue aplicar"; os níveis acima dependem de explicar e ensinar, que entram em fases futuras. As regras estão em `docs/adr/0003-knowledge-map.md`.
+O tema abre no modo claro e pode ser trocado (claro, escuro ou seguir o sistema) no canto de baixo da barra lateral. Funciona sem internet: só as fontes do Google Fonts deixam de carregar.
 
-O diagnóstico não conclui módulos sozinho. Quando ele indica que você já domina um módulo, o `hone path` avisa, e você decide se roda `hone done`.
+## Como os exercícios são corrigidos
 
-Um módulo só abre quando todos os pré-requisitos estão concluídos. Os módulos podem ser chamados pelo nome curto (`recursion`) ou pelo nome completo (`cs-fundamentals/recursion`).
+| Tipo | Correção |
+|---|---|
+| Escolha ou resposta curta | gabarito (espaços e maiúsculas não importam) |
+| Código Python | os testes do exercício rodam de verdade, com limite de tempo |
+| Dissertativa | Ollama julga cada critério da rubrica; sem Ollama, autoavaliação com resposta de referência |
 
-## Dashboard
+- Passa em dissertativa quem cumpre pelo menos dois terços dos critérios.
+- **XP de competência** vem só da primeira aprovação de cada exercício; quiz e autoavaliação valem metade, e cada dica tira 25%. **XP de atividade** vem de tentar (2 por tentativa, nas três primeiras).
+- Aprovar sobe o domínio das competências do módulo: código → "consegue aplicar"; quiz e autoavaliação → "reconhece"; dissertativa corrigida pelo Ollama → "consegue explicar" (se você já aplica).
 
-```powershell
-hone serve --open
-```
+As regras completas e o porquê de cada uma estão em `docs/adr/0004-exercise-engine-and-browser-interface.md`.
 
-O dashboard mostra o streak, o check-in, o tempo de estudo dos últimos 14 dias, o progresso nas trilhas, o conteúdo dos módulos e, na aba **Mapa**, o domínio por competência, o caminho até o objetivo, as lacunas e os módulos por nível de pré-requisito. Ele é só para leitura: registrar sessões e concluir módulos continua no CLI. O tema segue o sistema operacional e pode ser trocado no botão do topo.
+## Ollama (correção por IA local)
 
-Funciona sem internet: o Chart.js está em `dashboard/vendor/`. Sem conexão, só as fontes do Google Fonts deixam de carregar, e o navegador usa as fontes locais de fallback.
+1. Baixe e instale em https://ollama.com/download (gratuito, sem conta).
+2. Num terminal, baixe o modelo usado na correção (uns 4,7 GB):
+
+   ```powershell
+   ollama pull qwen2.5-coder:7b
+   ```
+
+3. Pronto: com o Ollama aberto, as dissertativas passam a ser corrigidas por ele. Nada sai da sua máquina.
+
+Para trocar o modelo ou o endereço, use `HONE_OLLAMA_MODEL` e `HONE_OLLAMA_URL` no `.env`.
 
 ## Conteúdo das trilhas
 
@@ -91,7 +90,15 @@ data/
     track.toml              a trilha, seus módulos e pré-requisitos
     01-modulo.md            teoria em Markdown
   diagnostics/<nome>.toml   perguntas do diagnóstico, por competência
+exercises/<trilha>/<módulo>/<exercício>/
+  exercise.toml             tipo, correção, dificuldade, dicas
+  README.md                 enunciado
+  starter.py                código inicial (exercícios de código)
+  test_solution.py          testes (exercícios de código)
+  reference.md              resposta de referência (dissertativas)
 ```
+
+Tudo é validado a cada abertura do `hone`: pré-requisitos inexistentes, ciclos, arquivos faltando, competências desconhecidas, exercício sem formato de resposta. Se algo estiver errado, ele lista todos os problemas e não grava nada. Remover um módulo, pergunta ou exercício dos arquivos não apaga o seu histórico.
 
 Exemplo de módulo no `track.toml`:
 
@@ -105,11 +112,7 @@ requires = ["stack-and-heap-memory"]
 competencies = ["recursion"]
 ```
 
-- `requires` aceita módulos da mesma trilha (`"recursion"`) ou de outra (`"outra-trilha/modulo"`).
-- `hone content sync` valida tudo antes de gravar: pré-requisitos inexistentes, ciclos, arquivos faltando, competências desconhecidas. Se algo estiver errado, ele lista todos os problemas e não grava nada.
-- Remover um módulo do arquivo não apaga o seu progresso no banco. O sync só avisa que o módulo ficou órfão.
-
-Exemplos de pergunta do diagnóstico:
+Exemplo de pergunta do diagnóstico:
 
 ```toml
 [[questions]]
@@ -120,20 +123,34 @@ prompt = "Qual estrutura segue a regra \"o último a entrar é o primeiro a sair
 options = ["Pilha", "Fila", "Tabela hash"]
 answer = 1                       # número da alternativa certa
 explanation = "Pilha é LIFO; fila é FIFO."
-
-[[questions]]
-slug = "complete-factorial"
-competency = "recursion"
-kind = "complete_code"
-prompt = "Complete: `return n * ______`"
-accept = ["fatorial(n - 1)"]     # resposta digitada; espaços e maiúsculas não importam
 ```
 
-Perguntas de código (`code_reading`, `debugging`, `complete_code`) valem como evidência de "consegue aplicar"; perguntas de conceito, como "reconhece". Remover uma pergunta do arquivo tira ela dos próximos diagnósticos, mas as respostas antigas continuam no banco.
+Exemplo de `exercise.toml` de código (a pasta tem também `README.md`, `starter.py` e `test_solution.py`, que importa de `solution`):
+
+```toml
+title = "Achatar listas aninhadas"
+kind = "code"
+grading = "auto"
+difficulty = 3                   # 1 a 5; define o XP (5, 10, 20, 35, 50)
+required = true                  # trava a conclusão do módulo
+hints = ["Primeira dica.", "Segunda dica."]
+```
+
+Exemplo de dissertativa (com `README.md` e, se quiser, `reference.md`):
+
+```toml
+title = "Por que não guardar dinheiro em float?"
+kind = "explanation"
+grading = "ollama"               # ou "self" para sempre autoavaliar
+difficulty = 2
+rubric = ["Explica que 0.1 não tem representação exata em binário", "Propõe Decimal ou centavos"]
+```
+
+Quiz de escolha usa `options` + `answer`; resposta curta usa `accept = ["..."]`.
 
 ## API local
 
-Com `hone serve` rodando, a documentação da API fica em http://127.0.0.1:8000/docs, e o endpoint `/health` diz se o banco está em dia.
+Com o sistema aberto, a documentação da API fica em http://127.0.0.1:8000/docs, e `/health` diz se o banco está em dia. A API só aceita conexões de `127.0.0.1`, e toda ação que grava dados exige um cabeçalho que só o próprio dashboard envia, para que nenhum outro site aberto no navegador consiga usá-la.
 
 ## Containers das trilhas
 
@@ -160,29 +177,37 @@ ruff format .
 
 ```
 hone/
+  cli.py         o comando hone: prepara tudo e abre o navegador
+  startup.py     migrações, usuária e sync do conteúdo na abertura
   core/          banco, migrações, entidades do domínio
     migrations/  arquivos NNNN_descricao.sql, aplicados em ordem
-    workspace.py abre banco + usuária para CLI e API
   engines/
-    content.py   leitura, validação e sync de data/
+    content.py        leitura, validação e sync de data/ e exercises/
     toml_tables.py    leitura e validação de campos dos arquivos TOML
-    question_bank.py  perguntas do diagnóstico (data/diagnostics/)
+    question_bank.py  perguntas do diagnóstico
+    exercise_bank.py  exercícios (exercise.toml e arquivos da pasta)
     diagnostic.py     rodadas, correção e regras de domínio
+    exercises.py      pasta de trabalho, dicas, tentativas, promoção de domínio
+    submissions.py    envio: gabarito, testes, Ollama ou autoavaliação
+    grading.py        executor de testes e correção por rubrica
+    ollama.py         cliente do Ollama (só biblioteca padrão)
+    xp.py             regras de XP
+    metrics.py        prática por competência
     mastery.py        domínio atual e histórico por competência
     knowledge.py      grafo (NetworkX), caminho, lacunas e objetivo
-    progress.py  status dos módulos e trava de pré-requisitos
-    sessions.py  sessões de estudo
-    checkins.py  check-in diário e streak
-    overview.py  resumo do dia (base do dashboard)
-  cli/           comandos do terminal (typer + rich)
-  api/           API local (FastAPI) e tokens de tema
+    progress.py       status dos módulos e travas
+    sessions.py       sessões de estudo
+    checkins.py       check-in diário e streak
+    overview.py       resumo do dia
+  api/           API local (FastAPI), rotas por área e tokens de tema
   voice.py       textos com a voz do sistema e erros como "Desafio"
-  ui_palette.py  cores da marca, compartilhadas entre CLI e dashboard
-data/            catálogo e trilhas (TOML + Markdown)
+  ui_palette.py  cores da marca
+data/            catálogo, trilhas e diagnóstico (TOML + Markdown)
 exercises/       exercícios executáveis
-dashboard/       dashboard HTML + JS puro + Chart.js
+workspace/       suas soluções e rascunhos (fora do Git)
+dashboard/       interface HTML + JS puro + Chart.js
 docker/          compose dos serviços reais das trilhas
-scripts/         scripts de agendamento (briefing, check-in)
+scripts/         open-hone.cmd (abrir com dois cliques)
 docs/adr/        registro das decisões de arquitetura
 tests/
 ```
@@ -197,12 +222,12 @@ As regras estão na skill `.claude/skills/code-style/SKILL.md`:
 
 ## Como criar uma migração
 
-1. Crie `hone/core/migrations/0003_descricao.sql`, com o próximo número da sequência.
+1. Crie `hone/core/migrations/0005_descricao.sql`, com o próximo número da sequência.
 2. Não use `BEGIN`/`COMMIT`: o executor já roda o arquivo inteiro numa transação.
 3. Nunca edite uma migração que já foi aplicada; crie uma nova.
-4. Rode `hone db init`.
+4. Abra o `hone`: ele aplica o que estiver pendente.
 
 ## Ainda não coberto (fases futuras)
 
-- **Ollama**: instalação e modelos (`qwen2.5-coder`, `llama3.2`, `phi3`) serão documentados quando a correção por IA entrar.
-- **Agendamento (Agendador de Tarefas do Windows)**: o lembrete de check-in e o briefing diário vão ficar em `scripts/`, com um script que registra as tarefas via `schtasks`. Entram junto com o hook de pre-push (Fase 3) e o Tech Knowledge Hub (Fase 10).
+- **Execução isolada em Docker**, C#/xUnit, SQL real e frontend com renderização: Fase 4.
+- **Lembretes e briefing diário** pelo Agendador de Tarefas do Windows, e o **hook de pre-push** que bloqueia push sem check-in: vão chamar a API local, sem comandos novos.

@@ -1,0 +1,10 @@
+title = "A pilha de chamadas do fatorial"
+kind = "explanation"
+grading = "self"
+difficulty = 2
+rubric = [
+  "Mostra as quatro chamadas empilhadas, de fatorial(3) até fatorial(0)",
+  "Diz que cada chamada tem seu próprio frame, com o seu próprio n",
+  "Explica que a pilha só começa a encolher quando o caso base devolve 1",
+  "Mostra a volta com os valores: 1, depois 1 × 1, depois 2 × 1, depois 3 × 2 = 6",
+]

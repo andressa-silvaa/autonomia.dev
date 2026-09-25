@@ -1,0 +1,6 @@
+title = "O laço que corta pela metade"
+kind = "code_reading"
+grading = "auto"
+difficulty = 1
+options = ["O(1)", "O(log n)", "O(n)", "O(n²)"]
+answer = 2

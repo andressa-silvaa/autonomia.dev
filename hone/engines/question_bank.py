@@ -57,7 +57,7 @@ def _parse_choice_answer(
     return (options[answer - 1],)
 
 
-def _parse_accepted_answers(
+def parse_answer_key(
     reader: TableReader, options: tuple[str, ...], location: str, problems: list[str]
 ) -> tuple[str, ...]:
     if reader.has("options") and reader.has("accept"):
@@ -81,7 +81,7 @@ def _parse_question(table: dict, location: str, problems: list[str]) -> Question
         kind=_parse_kind(reader, location, problems),
         prompt=reader.text("prompt"),
         options=options,
-        accepted_answers=_parse_accepted_answers(reader, options, location, problems),
+        accepted_answers=parse_answer_key(reader, options, location, problems),
         explanation=reader.text("explanation", required=False),
     )
 

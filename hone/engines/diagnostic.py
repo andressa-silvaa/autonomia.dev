@@ -9,6 +9,7 @@ from datetime import datetime
 
 from hone.core.clock import parse_iso_utc, to_iso_utc
 from hone.core.models import AnswerConfidence, Mastery, QuestionKind
+from hone.engines.grading import matches_accepted_answer
 from hone.engines.mastery import current_mastery, record_mastery
 
 DIAGNOSTIC_SOURCE = "diagnostic"
@@ -29,6 +30,12 @@ class NoFinishedDiagnosticError(Exception):
 class NoOpenDiagnosticError(Exception):
     def __init__(self) -> None:
         super().__init__("No diagnostic in progress")
+
+
+class QuestionNotPendingError(Exception):
+    def __init__(self, question_id: int) -> None:
+        super().__init__(f"Question {question_id} is not the one waiting for an answer")
+        self.question_id = question_id
 
 
 class DiagnosticIncompleteError(Exception):
@@ -112,15 +119,8 @@ class DiagnosticReport:
     results: tuple[CompetencyResult, ...]
 
 
-def normalize_answer(text: str) -> str:
-    return "".join(text.split()).casefold()
-
-
 def is_correct_answer(question: Question, answer: str) -> bool:
-    normalized = normalize_answer(answer)
-    return bool(normalized) and any(
-        normalized == normalize_answer(accepted) for accepted in question.accepted_answers
-    )
+    return matches_accepted_answer(answer, question.accepted_answers)
 
 
 def assess_competency(answers: Sequence[AnswerRecord]) -> Mastery:
@@ -224,6 +224,13 @@ def next_question(conn: sqlite3.Connection, run_id: int) -> Question | None:
         (run_id,),
     ).fetchone()
     return _row_to_question(row) if row is not None else None
+
+
+def pending_question(conn: sqlite3.Connection, run_id: int, question_id: int) -> Question:
+    question = next_question(conn, run_id)
+    if question is None or question.id != question_id:
+        raise QuestionNotPendingError(question_id)
+    return question
 
 
 def record_answer(

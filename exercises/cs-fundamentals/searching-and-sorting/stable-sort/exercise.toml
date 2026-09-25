@@ -1,0 +1,11 @@
+title = "O que é uma ordenação estável?"
+kind = "quiz"
+grading = "auto"
+difficulty = 2
+options = [
+  "Ela mantém a ordem original entre itens que são considerados iguais",
+  "Ela sempre leva o mesmo tempo, qualquer que seja a entrada",
+  "Ela não usa memória extra",
+  "Ela nunca falha com listas vazias",
+]
+answer = 1

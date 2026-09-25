@@ -21,7 +21,7 @@ def find_primary_user(conn: sqlite3.Connection) -> User | None:
 def get_primary_user(conn: sqlite3.Connection) -> User:
     user = find_primary_user(conn)
     if user is None:
-        raise UserNotFoundError("No user registered. Run `hone db init` first.")
+        raise UserNotFoundError("No user registered. Start `hone` to create one.")
     return user
 
 

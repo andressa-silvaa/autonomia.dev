@@ -1,26 +1,78 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>autonomia.dev</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
   <link rel="stylesheet" href="/theme/tokens.css">
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <header class="topbar">
-    <a class="wordmark" href="#/">autonomia<span class="wordmark-dot">.dev</span></a>
-    <nav class="nav" aria-label="Principal">
-      <a href="#/" data-nav="today">Hoje</a>
-      <a href="#/tracks" data-nav="tracks">Trilhas</a>
-      <a href="#/map" data-nav="map">Mapa</a>
-    </nav>
-    <button class="theme-toggle" type="button" id="theme-toggle" aria-label="Trocar tema"></button>
-  </header>
-  <main id="view" class="view" tabindex="-1" aria-live="polite"></main>
+  <svg class="icon-defs" aria-hidden="true">
+    <symbol id="icon-today" viewBox="0 0 24 24">
+      <rect x="3.5" y="5" width="17" height="15" rx="2"></rect>
+      <path d="M3.5 9.5h17M8 3v4M16 3v4"></path>
+    </symbol>
+    <symbol id="icon-tracks" viewBox="0 0 24 24">
+      <path d="M4 5.5h10M4 12h16M4 18.5h7"></path>
+    </symbol>
+    <symbol id="icon-map" viewBox="0 0 24 24">
+      <circle cx="6" cy="6" r="2.5"></circle>
+      <circle cx="18" cy="12" r="2.5"></circle>
+      <circle cx="6" cy="18" r="2.5"></circle>
+      <path d="M8.5 6h4a3 3 0 0 1 3 3v.5M8.5 18h4a3 3 0 0 0 3-3v-.5"></path>
+    </symbol>
+    <symbol id="icon-stats" viewBox="0 0 24 24">
+      <path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path>
+    </symbol>
+    <symbol id="icon-done" viewBox="0 0 24 24">
+      <path d="M4.5 12.5l5 5 10-11"></path>
+    </symbol>
+    <symbol id="icon-current" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8"></circle>
+      <circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"></circle>
+    </symbol>
+    <symbol id="icon-open" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8"></circle>
+    </symbol>
+    <symbol id="icon-locked" viewBox="0 0 24 24">
+      <rect x="5" y="10.5" width="14" height="9.5" rx="2"></rect>
+      <path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"></path>
+    </symbol>
+    <symbol id="icon-hint" viewBox="0 0 24 24">
+      <path d="M9.5 18h5M10 21h4"></path>
+      <path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5.9 1.2 1 1.9h5c.1-.7.4-1.4 1-1.9A6 6 0 0 0 12 3z"></path>
+    </symbol>
+    <symbol id="icon-play" viewBox="0 0 24 24">
+      <path d="M8 5.5l10 6.5-10 6.5z"></path>
+    </symbol>
+    <symbol id="icon-stop" viewBox="0 0 24 24">
+      <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+    </symbol>
+  </svg>
+
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="wordmark" href="#/">autonomia<span class="wordmark-dot">.dev</span></a>
+      <nav class="nav" aria-label="Principal">
+        <a href="#/" data-nav="today"><svg class="nav-icon" aria-hidden="true"><use href="#icon-today"></use></svg>Hoje</a>
+        <a href="#/tracks" data-nav="tracks"><svg class="nav-icon" aria-hidden="true"><use href="#icon-tracks"></use></svg>Trilhas</a>
+        <a href="#/map" data-nav="map"><svg class="nav-icon" aria-hidden="true"><use href="#icon-map"></use></svg>Mapa</a>
+        <a href="#/stats" data-nav="stats"><svg class="nav-icon" aria-hidden="true"><use href="#icon-stats"></use></svg>Métricas</a>
+      </nav>
+      <div class="sidebar-foot">
+        <div class="theme-switch" role="group" aria-label="Tema">
+          <button type="button" data-theme-choice="light">Claro</button>
+          <button type="button" data-theme-choice="dark">Escuro</button>
+          <button type="button" data-theme-choice="system">Sistema</button>
+        </div>
+      </div>
+    </aside>
+    <main id="view" class="view" tabindex="-1" aria-live="polite"></main>
+  </div>
   <script src="/static/vendor/chart.umd.min.js"></script>
   <script src="/static/app.js"></script>
 </body>

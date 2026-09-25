@@ -1,0 +1,10 @@
+title = "A lista que não esquece"
+kind = "debug"
+grading = "auto"
+difficulty = 2
+required = true
+hints = [
+  "Chame add_item(\"a\") e depois add_item(\"b\") e olhe o que volta. A lista da segunda chamada veio de onde?",
+  "O valor padrão de um parâmetro é criado uma vez só, quando a função é definida, e não a cada chamada.",
+  "O jeito idiomático é usar None como padrão e criar a lista nova dentro da função.",
+]

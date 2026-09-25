@@ -4,6 +4,7 @@ from datetime import date, datetime
 
 from pydantic import BaseModel
 
+from hone.api.exercise_schemas import ExerciseSummaryOut, XpOut
 from hone.core.clock import utc_now
 from hone.core.models import Mastery
 from hone.engines.checkins import Checkin, Streak
@@ -108,6 +109,8 @@ class ModuleOut(BaseModel):
 class ModuleDetailOut(ModuleOut):
     track_name: str
     content_html: str
+    exercises: list[ExerciseSummaryOut]
+    pending_required: list[str]
 
 
 class TrackSummaryOut(BaseModel):
@@ -147,9 +150,10 @@ class OverviewOut(BaseModel):
     tracks: list[TrackSummaryOut]
     next_modules: list[ModuleOut]
     goal: ModuleOut | None
+    xp: XpOut
 
     @classmethod
-    def from_overview(cls, user_name: str, overview: Overview) -> OverviewOut:
+    def from_overview(cls, user_name: str, overview: Overview, xp: XpOut) -> OverviewOut:
         return cls(
             user_name=user_name,
             today=overview.today,
@@ -166,6 +170,7 @@ class OverviewOut(BaseModel):
             tracks=[TrackSummaryOut.from_view(track) for track in overview.tracks],
             next_modules=[ModuleOut.from_view(module) for module in overview.next_modules],
             goal=ModuleOut.from_view(overview.goal_path.goal) if overview.goal_path else None,
+            xp=xp,
         )
 
 
@@ -253,3 +258,39 @@ class LearningPathOut(BaseModel):
             steps=[],
             gaps=[CompetencyOut.from_state(state) for state in assessed_gaps],
         )
+
+
+class CheckinIn(BaseModel):
+    intention: str
+
+
+class CheckinResultOut(BaseModel):
+    message: str
+    streak: StreakOut
+
+
+class SessionStartIn(BaseModel):
+    module_key: str | None = None
+
+
+class SessionStopIn(BaseModel):
+    notes: str = ""
+
+
+class MessageOut(BaseModel):
+    message: str
+
+
+class CompletionOut(BaseModel):
+    message: str
+    unlocked: list[ModuleOut]
+    track_message: str | None
+
+
+class GoalIn(BaseModel):
+    module_key: str
+
+
+class GoalOut(BaseModel):
+    message: str
+    path: LearningPathOut

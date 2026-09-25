@@ -1,0 +1,8 @@
+title = "Fila feita de duas pilhas"
+kind = "code"
+grading = "auto"
+difficulty = 4
+hints = [
+  "Uma pilha recebe tudo o que entra. A outra entrega o que sai.",
+  "Só passe os itens de uma pilha para a outra quando a pilha de saída estiver vazia. Passar inverte a ordem, e é exatamente isso que você quer.",
+]

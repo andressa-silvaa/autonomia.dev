@@ -17,6 +17,8 @@ data/*.db
 data/*.db-wal
 data/*.db-shm
 
+workspace/
+
 .vscode/
 .idea/
 .DS_Store

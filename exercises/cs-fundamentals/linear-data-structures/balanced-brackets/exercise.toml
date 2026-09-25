@@ -1,0 +1,10 @@
+title = "Parênteses balanceados"
+kind = "code"
+grading = "auto"
+difficulty = 3
+required = true
+hints = [
+  "Quem abre por último precisa fechar primeiro. Qual estrutura segue essa regra?",
+  "Empilhe cada abertura. Ao ver um fechamento, o topo da pilha precisa ser a abertura correspondente.",
+  "No fim, a pilha precisa estar vazia. E um fechamento com a pilha vazia já é erro.",
+]

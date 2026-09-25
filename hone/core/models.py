@@ -85,6 +85,24 @@ class AnswerConfidence(StrEnum):
     DONT_KNOW = "dont_know"
 
 
+class AnswerFormat(StrEnum):
+    CHOICE = "choice"
+    TYPED = "typed"
+    CODE = "code"
+    TEXT = "text"
+
+
+class ExerciseStatus(StrEnum):
+    NOT_STARTED = "not_started"
+    STARTED = "started"
+    PASSED = "passed"
+
+
+class XpKind(StrEnum):
+    COMPETENCY = "competency"
+    ACTIVITY = "activity"
+
+
 class ProjectKind(StrEnum):
     INTEGRATOR = "integrator"
     SURPRISE = "surprise"

@@ -1,0 +1,6 @@
+title = "Cópia ou referência?"
+kind = "code_reading"
+grading = "auto"
+difficulty = 1
+options = ["[1, 2]", "[1, 2, 3]", "[3]", "Dá erro"]
+answer = 1

@@ -6,6 +6,12 @@ from dataclasses import dataclass
 from graphlib import CycleError, TopologicalSorter
 from pathlib import Path
 
+from hone.engines.exercise_bank import (
+    ExerciseDefinition,
+    parse_exercises,
+    sync_exercises,
+    validate_exercises,
+)
 from hone.engines.question_bank import (
     QuestionDefinition,
     parse_questions,
@@ -74,6 +80,7 @@ class ContentDefinition:
     competencies: tuple[CompetencyDefinition, ...]
     tracks: tuple[TrackDefinition, ...]
     questions: tuple[QuestionDefinition, ...] = ()
+    exercises: tuple[ExerciseDefinition, ...] = ()
 
     @property
     def modules(self) -> tuple[ModuleDefinition, ...]:
@@ -89,6 +96,8 @@ class SyncReport:
     orphan_modules: tuple[str, ...]
     questions: int = 0
     retired_questions: tuple[str, ...] = ()
+    exercises: int = 0
+    retired_exercises: tuple[str, ...] = ()
 
 
 def module_key(track_slug: str, module_slug: str) -> str:
@@ -244,7 +253,7 @@ def _validate_acyclic(content: ContentDefinition, problems: list[str]) -> None:
         problems.append("prerequisite cycle: " + " -> ".join(cycle))
 
 
-def load_content(content_dir: Path) -> ContentDefinition:
+def load_content(content_dir: Path, exercises_dir: Path | None = None) -> ContentDefinition:
     problems: list[str] = []
     areas, competencies = _parse_catalog(content_dir, problems)
 
@@ -259,10 +268,12 @@ def load_content(content_dir: Path) -> ContentDefinition:
             tracks.append(track)
 
     questions = parse_questions(content_dir, problems)
-    content = ContentDefinition(areas, competencies, tuple(tracks), questions)
+    exercises = parse_exercises(exercises_dir, problems)
+    content = ContentDefinition(areas, competencies, tuple(tracks), questions, exercises)
     if not problems:
         _validate_references(content, problems)
         validate_questions(questions, {c.slug for c in competencies}, problems)
+        validate_exercises(exercises, {module.key for module in content.modules}, problems)
     if not problems:
         _validate_acyclic(content, problems)
     if problems:
@@ -345,6 +356,7 @@ def sync_content(conn: sqlite3.Connection, content: ContentDefinition) -> SyncRe
         ids_by_key = _module_ids_by_key(conn)
         _replace_module_links(conn, content, ids_by_key)
         retired_questions = sync_questions(conn, content.questions)
+        retired_exercises = sync_exercises(conn, content.exercises)
 
     defined_keys = {module.key for module in content.modules}
     orphans = tuple(sorted(key for key in ids_by_key if key not in defined_keys))
@@ -356,4 +368,6 @@ def sync_content(conn: sqlite3.Connection, content: ContentDefinition) -> SyncRe
         orphan_modules=orphans,
         questions=len(content.questions),
         retired_questions=retired_questions,
+        exercises=len(content.exercises),
+        retired_exercises=retired_exercises,
     )
