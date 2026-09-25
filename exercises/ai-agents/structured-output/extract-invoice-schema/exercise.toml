@@ -1,0 +1,10 @@
+title = "Um schema que não deixa passar lixo"
+kind = "code"
+grading = "auto"
+difficulty = 3
+required = true
+hints = [
+  "Comece pelo esqueleto: type object, properties, required, additionalProperties.",
+  "Para o valor, use type number com minimum. Para a data, type string com o formato pedido no enunciado.",
+  "additionalProperties = False é o que impede campos inventados de passarem.",
+]

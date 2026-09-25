@@ -12,7 +12,15 @@ Tudo roda local e de graça: Python, SQLite, Docker e Ollama. O comando e o paco
 | 1 — Núcleo de estudos | ✅ entregue |
 | 2 — Diagnóstico e mapa de conhecimento | ✅ entregue |
 | 3 — Engine de exercícios (e interface no navegador) | ✅ entregue |
+| Trilha de IA e Agentes | ✅ entregue |
 | 4 — Execução de código em Docker | próxima |
+
+## Trilhas disponíveis
+
+| Trilha | Módulos | Exercícios | Sobre |
+|---|---|---|---|
+| Fundamentos de CS | 8 | 18 | Execução de programas, memória, complexidade, estruturas de dados, recursão, busca e ordenação |
+| IA e Agentes | 10 | 19 | Como um LLM funciona, prompting, saída estruturada, context engineering, embeddings, RAG, tool calling, agentes, avaliação e quando não usar IA |
 
 ## Requisitos
 

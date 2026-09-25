@@ -1,0 +1,10 @@
+title = "Montar o prompt na ordem que o cache gosta"
+kind = "code"
+grading = "auto"
+difficulty = 3
+required = true
+hints = [
+  "O cache casa por prefixo: o que nunca muda tem que vir primeiro, e o que muda a cada chamada, por último.",
+  "A parte estável recebe cache_control. A parte volátil fica depois dela, sem cache_control.",
+  "Ferramentas em ordem instável também invalidam o cache: ordene por nome.",
+]

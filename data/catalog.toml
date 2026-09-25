@@ -140,3 +140,63 @@ slug = "searching-and-sorting"
 area = "fundamentals"
 name = "Busca e ordenação"
 description = "Busca binária, algoritmos de ordenação e seus custos."
+
+[[competencies]]
+slug = "llm-fundamentals"
+area = "llms-agents"
+name = "Como um LLM funciona"
+description = "Tokens, contexto, amostragem, alucinação e o que o modelo não consegue fazer."
+
+[[competencies]]
+slug = "prompting"
+area = "llms-agents"
+name = "Prompting"
+description = "Instruções claras, exemplos, formato de saída e iteração sobre o prompt."
+
+[[competencies]]
+slug = "context-engineering"
+area = "llms-agents"
+name = "Context engineering"
+description = "Escolher o que entra na janela de contexto, e o que deixar de fora."
+
+[[competencies]]
+slug = "structured-output"
+area = "llms-agents"
+name = "Saída estruturada"
+description = "Obter JSON válido e validado, para integrar o modelo a um sistema."
+
+[[competencies]]
+slug = "embeddings-and-search"
+area = "llms-agents"
+name = "Embeddings e busca semântica"
+description = "Vetores, similaridade e busca por significado."
+
+[[competencies]]
+slug = "rag"
+area = "llms-agents"
+name = "RAG"
+description = "Recuperar trechos relevantes e responder com base neles, citando a fonte."
+
+[[competencies]]
+slug = "tool-calling"
+area = "llms-agents"
+name = "Tool calling"
+description = "Dar ferramentas ao modelo e executar o que ele pede, com segurança."
+
+[[competencies]]
+slug = "agents"
+area = "llms-agents"
+name = "Agentes"
+description = "O laço de agente, limites, custo e quando um workflow simples é melhor."
+
+[[competencies]]
+slug = "ai-evaluation"
+area = "llms-agents"
+name = "Avaliação de sistemas com IA"
+description = "Conjunto de avaliação, métricas e como saber se uma mudança melhorou."
+
+[[competencies]]
+slug = "ai-judgment"
+area = "llms-agents"
+name = "Julgamento sobre uso de IA"
+description = "Quando não usar IA, como validar respostas e riscos de segurança."

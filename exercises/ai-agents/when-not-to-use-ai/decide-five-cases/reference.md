@@ -1,0 +1,11 @@
+**1. Explicar módulo legado: sim.** É exatamente onde o modelo ajuda de verdade: ler muito código rápido e dar um mapa inicial. Mas é ponto de partida, não verdade: eu confirmo lendo os trechos críticos e rodando os testes. Aqui ele é multiplicador, porque eu ainda vou entender o módulo; viraria muleta se eu saísse alterando o código com base só na explicação.
+
+**2. Decidir acesso a recurso: não.** Autorização é decisão de segurança, e a saída de um LLM é probabilística: a mesma entrada pode dar respostas diferentes, e um erro aqui vira vazamento ou bloqueio indevido. Pior, se a política ou o perfil vierem de texto que o usuário controla, isso é uma porta aberta para injeção de prompt. O lugar do modelo aqui, se houver algum, é **traduzir** a política escrita em regras explícitas, revisadas por gente, que o sistema então avalia de forma determinística e testável.
+
+**3. Texto do e-mail: sim.** Rascunho de texto é o caso mais confortável: erro é barato, a revisão é fácil, e a pessoa que revisa sabe julgar o resultado. Eu reviso antes de subir, principalmente por causa de tom e de qualquer promessa que o texto faça.
+
+**4. Juros de mora: não.** É cálculo determinístico, com regra definida em contrato e provavelmente em lei. Uma função pura resolve: custa zero, responde em microssegundos, é testável com casos limite, e dá o mesmo resultado sempre. Uma diferença de centavos aqui vira problema jurídico e de conciliação. Nem como "conferência" vale a pena, porque um segundo resultado com confiança fabricada só confunde.
+
+**5. Feedback com dado pessoal: não do jeito descrito.** O problema não é a qualidade da classificação, é mandar nome, e-mail e telefone de cliente para fora. Antes de discutir modelo, discuto base legal, contrato com o fornecedor e política de retenção. Na prática, eu removeria os dados pessoais antes de enviar (quase sempre a classificação não precisa deles), ou usaria um modelo local. Se nada disso for possível, a tarefa não sobe.
+
+**O critério.** Eu recuso quando existe uma resposta certa que uma função pode calcular (caso 4), quando o erro é caro e difícil de detectar a tempo (caso 2), ou quando a chamada em si cria um risco que não é técnico (caso 5). Eu aceito quando o erro é barato, visível e revisável por alguém que sabe julgar o resultado (casos 1 e 3).

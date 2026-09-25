@@ -1,0 +1,11 @@
+title = "Contando tokens sem chutar"
+kind = "quiz"
+grading = "auto"
+difficulty = 1
+options = [
+  "client.messages.count_tokens(...), que usa o mesmo tokenizador do modelo",
+  "len(texto) // 4, que é uma boa aproximação",
+  "tiktoken, que é o padrão da indústria",
+  "len(texto.split()), contando palavras",
+]
+answer = 1

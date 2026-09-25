@@ -1,0 +1,9 @@
+title = "Buscar os k mais parecidos"
+kind = "code"
+grading = "auto"
+difficulty = 2
+hints = [
+  "Calcule a similaridade da consulta com cada documento e guarde junto com o índice.",
+  "Ordene por similaridade decrescente. Para empate, o índice menor vem primeiro.",
+  "sorted aceita uma chave que devolve tupla: (-similaridade, índice) resolve os dois critérios de uma vez.",
+]

@@ -1,0 +1,10 @@
+title = "Similaridade de cosseno na mão"
+kind = "code"
+grading = "auto"
+difficulty = 2
+required = true
+hints = [
+  "Cosseno é o produto escalar dividido pelo produto das normas.",
+  "A norma de um vetor é a raiz quadrada da soma dos quadrados.",
+  "Vetor de norma zero não tem direção: trate esse caso antes de dividir.",
+]

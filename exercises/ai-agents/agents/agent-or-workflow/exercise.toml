@@ -1,0 +1,15 @@
+title = "Agente ou workflow?"
+kind = "explanation"
+grading = "ollama"
+difficulty = 3
+rubric = [
+  "Decide caso a caso e justifica cada decisão, sem responder \"depende\" de forma genérica",
+  "Usa como critério central se a sequência de passos é conhecida de antemão",
+  "Acerta que o caso 1 (extrair campos de PDF) é workflow, por ser sequência fixa",
+  "Acerta que o caso 3 (investigar causa de erro em produção) é o mais defensável como agente",
+  "Menciona custo, previsibilidade ou testabilidade em pelo menos uma justificativa",
+]
+hints = [
+  "A pergunta-chave é: eu consigo escrever a sequência de passos no código, agora, sem saber a entrada específica?",
+  "Se a resposta é sim, é workflow. Se a sequência depende do que for descoberto no meio do caminho, aí talvez seja agente.",
+]

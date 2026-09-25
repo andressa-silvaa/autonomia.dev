@@ -1,0 +1,16 @@
+title = "Usar ou não usar: cinco casos"
+kind = "explanation"
+grading = "ollama"
+difficulty = 3
+rubric = [
+  "Decide os cinco casos explicitamente, sem fugir com \"depende\" genérico",
+  "Recusa o caso 2 (autorização de acesso) e explica que decisão de segurança não pode depender de saída probabilística",
+  "Recusa o caso 4 (cálculo de juros) por ser determinístico, e indica a alternativa correta",
+  "Aceita o caso 1 (explicar código legado) e o trata como multiplicador, não muleta",
+  "Trata o caso 5 (dado de cliente) considerando privacidade, e não só qualidade da resposta",
+  "Usa critérios consistentes ao longo dos cinco, não intuição caso a caso",
+]
+hints = [
+  "Para cada caso pergunte: uma resposta errada aqui é detectável? E se passar despercebida, qual o estrago?",
+  "Determinismo é o divisor de águas: se existe uma resposta certa que uma função pode calcular, o LLM é o instrumento errado.",
+]
