@@ -13,8 +13,8 @@ def build_tokens_css() -> str:
     dark = _declarations(DARK_THEME)
     return (
         f":root {{\n{light}\n  color-scheme: light;\n}}\n"
-        "@media (prefers-color-scheme: dark) {\n"
-        f'  :root:not([data-theme="light"]) {{\n{dark}\n  color-scheme: dark;\n  }}\n'
-        "}\n"
         f':root[data-theme="dark"] {{\n{dark}\n  color-scheme: dark;\n}}\n'
+        "@media (prefers-color-scheme: dark) {\n"
+        f'  :root[data-theme="system"] {{\n{dark}\n  color-scheme: dark;\n  }}\n'
+        "}\n"
     )

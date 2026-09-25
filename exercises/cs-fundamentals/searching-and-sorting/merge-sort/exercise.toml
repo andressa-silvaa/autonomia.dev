@@ -1,0 +1,9 @@
+title = "Merge sort do zero"
+kind = "code"
+grading = "auto"
+difficulty = 4
+hints = [
+  "Caso base: uma lista com 0 ou 1 item já está ordenada.",
+  "Divida ao meio, ordene cada metade com merge_sort e depois junte as duas.",
+  "Para juntar, compare o primeiro item ainda não usado de cada metade e pegue o menor. Quando uma acabar, copie o resto da outra.",
+]

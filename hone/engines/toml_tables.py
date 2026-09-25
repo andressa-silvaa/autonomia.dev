@@ -28,6 +28,13 @@ class TableReader:
             return ()
         return tuple(value)
 
+    def boolean(self, key: str, *, default: bool) -> bool:
+        value = self._table.get(key, default)
+        if not isinstance(value, bool):
+            self._problems.append(f"{self._location}: field '{key}' must be true or false")
+            return default
+        return value
+
     def integer(self, key: str) -> int | None:
         value = self._table.get(key)
         if not isinstance(value, int) or isinstance(value, bool):

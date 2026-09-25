@@ -1,0 +1,11 @@
+title = "Quando o erro aparece?"
+kind = "quiz"
+grading = "auto"
+difficulty = 1
+options = [
+  "Em Python, antes de qualquer linha rodar; em C#, só quando a linha com erro for executada",
+  "Em Python, antes de qualquer linha rodar; em C#, já no build, antes de gerar o programa",
+  "Nos dois, só quando a linha com erro for executada",
+  "Nos dois, só depois que o programa termina",
+]
+answer = 2

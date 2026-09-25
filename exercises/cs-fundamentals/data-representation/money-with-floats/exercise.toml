@@ -1,0 +1,10 @@
+title = "Por que não guardar dinheiro em float?"
+kind = "explanation"
+grading = "ollama"
+difficulty = 2
+rubric = [
+  "Explica que muitos valores decimais, como 0.1, não têm representação exata em binário",
+  "Mostra que o erro aparece em somas e comparações, com um exemplo concreto",
+  "Propõe uma alternativa correta: Decimal ou guardar centavos em inteiros",
+  "Diz por que o erro importa em dinheiro, como arredondamento acumulado ou totais que não batem",
+]

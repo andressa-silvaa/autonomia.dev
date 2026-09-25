@@ -1,0 +1,9 @@
+title = "O schema passou, o dado está errado"
+kind = "code"
+grading = "auto"
+difficulty = 3
+hints = [
+  "O schema já garantiu forma. Aqui você checa o que ele não consegue: relações entre campos e regras do domínio.",
+  "Datas: converta com datetime.date.fromisoformat e compare com today.",
+  "Junte todos os problemas numa lista em vez de parar no primeiro.",
+]

@@ -1,0 +1,10 @@
+title = "Busca binária"
+kind = "code"
+grading = "auto"
+difficulty = 3
+required = true
+hints = [
+  "Mantenha dois índices, início e fim, que delimitam onde o alvo ainda pode estar.",
+  "Compare com o item do meio e descarte a metade em que o alvo não pode estar.",
+  "Cuidado com a condição do laço: quando início == fim ainda sobra um item para olhar.",
+]

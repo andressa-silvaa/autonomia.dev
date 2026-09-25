@@ -1,0 +1,9 @@
+title = "Dois números que somam o alvo"
+kind = "code"
+grading = "auto"
+difficulty = 2
+required = true
+hints = [
+  "Para cada número, qual outro número você precisaria ter visto antes para fechar a conta?",
+  "Guarde num dicionário cada número já visto e a posição dele. Assim a pergunta \"o complemento já apareceu?\" custa O(1).",
+]

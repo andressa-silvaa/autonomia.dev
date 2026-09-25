@@ -46,7 +46,7 @@ HTML + JS puro + Chart.js, servidos pelo FastAPI. As rotas são por hash (`#/tri
 
 ### 7. Tipografia
 
-Bricolage Grotesque (títulos, com peso e personalidade), Atkinson Hyperlegible (corpo, feita para legibilidade) e JetBrains Mono (código), todas com fallback local.
+Bricolage Grotesque (títulos), Atkinson Hyperlegible (corpo) e JetBrains Mono (código), todas com fallback local. **Substituída pelo ADR 0005.**
 
 ## Consequências
 

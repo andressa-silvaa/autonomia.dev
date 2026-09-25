@@ -37,6 +37,13 @@ class ModuleLockedError(Exception):
         self.module = module
 
 
+class RequiredExercisesPendingError(Exception):
+    def __init__(self, module: ModuleView, pending_titles: list[str]) -> None:
+        super().__init__(f"Module {module.key!r} has required exercises pending")
+        self.module = module
+        self.pending_titles = pending_titles
+
+
 @dataclass(frozen=True, slots=True)
 class ModuleLink:
     key: str
@@ -185,6 +192,18 @@ def start_module(conn: sqlite3.Connection, user_id: int, module: ModuleView, now
         )
 
 
+def pending_required_exercises(conn: sqlite3.Connection, user_id: int, module_id: int) -> list[str]:
+    rows = conn.execute(
+        "SELECT exercises.title FROM exercises "
+        "LEFT JOIN exercise_progress ON exercise_progress.exercise_id = exercises.id "
+        "AND exercise_progress.user_id = ? "
+        "WHERE exercises.module_id = ? AND exercises.required = 1 AND exercises.retired = 0 "
+        "AND exercise_progress.passed_at IS NULL ORDER BY exercises.position",
+        (user_id, module_id),
+    )
+    return [row["title"] for row in rows]
+
+
 def complete_module(
     conn: sqlite3.Connection, user_id: int, module: ModuleView, now: datetime
 ) -> list[ModuleView]:
@@ -192,6 +211,9 @@ def complete_module(
         raise ModuleLockedError(module)
     if module.status is ModuleStatus.COMPLETED:
         return []
+    pending = pending_required_exercises(conn, user_id, module.id)
+    if pending:
+        raise RequiredExercisesPendingError(module, pending)
 
     locked_before = {view.id for view in list_module_views(conn, user_id) if not view.is_open}
     timestamp = to_iso_utc(now)

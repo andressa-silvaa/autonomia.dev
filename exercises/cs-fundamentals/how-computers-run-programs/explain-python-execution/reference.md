@@ -1,0 +1,5 @@
+Quando rodo `python app.py`, o CPython lê o arquivo e compila o código-fonte para **bytecode**, uma sequência de instruções simples para a máquina virtual do Python (é o que vai para os arquivos `.pyc`). Essa compilação acontece antes de qualquer linha rodar, e é por isso que um erro de sintaxe aparece antes de tudo.
+
+Depois, a **máquina virtual** do CPython (um programa escrito em C, que já foi compilado para código de máquina) lê o bytecode e executa uma instrução de cada vez. A CPU nunca vê Python nem bytecode: ela executa o código de máquina do interpretador, que por sua vez decide o que fazer com cada instrução.
+
+No C#, o `dotnet build` compila tudo para **IL** antes de rodar, e o **JIT** transforma o IL em código de máquina de verdade na primeira vez que cada método é chamado. A diferença prática é que o C# acaba executando código de máquina gerado para o seu programa, o que costuma ser bem mais rápido, enquanto o Python fica interpretando instruções. Em troca, o Python é mais flexível e começa a rodar sem uma etapa de build separada.

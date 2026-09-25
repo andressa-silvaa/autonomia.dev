@@ -1,0 +1,9 @@
+title = "Montar o prompt do RAG"
+kind = "code"
+grading = "auto"
+difficulty = 3
+hints = [
+  "O prompt precisa de três partes: os trechos recuperados, a instrução de só usar eles, e a pergunta.",
+  "Numere as fontes para o modelo poder citar: [1], [2], [3].",
+  "Sem trecho nenhum, não peça para o modelo responder: peça para dizer que não há base.",
+]

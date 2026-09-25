@@ -1,0 +1,8 @@
+title = "Caçar o invalidador de cache"
+kind = "debug"
+grading = "auto"
+difficulty = 2
+hints = [
+  "Compare o prompt de duas chamadas seguidas, byte a byte, começando do início. Onde eles passam a diferir?",
+  "json.dumps sobre um dicionário pode mudar a ordem das chaves entre execuções se você não pedir sort_keys.",
+]

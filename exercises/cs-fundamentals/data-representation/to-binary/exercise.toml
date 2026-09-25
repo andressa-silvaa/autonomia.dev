@@ -1,0 +1,10 @@
+title = "Decimal para binário, sem atalhos"
+kind = "code"
+grading = "auto"
+difficulty = 2
+required = true
+hints = [
+  "Divida o número por 2 repetidamente. O resto de cada divisão (0 ou 1) é um dígito binário.",
+  "Os restos saem do dígito menos significativo para o mais significativo, então você vai precisar inverter a ordem no final.",
+  "Não esqueça do zero: ele precisa virar \"0\", e o laço de divisões nem chega a rodar.",
+]

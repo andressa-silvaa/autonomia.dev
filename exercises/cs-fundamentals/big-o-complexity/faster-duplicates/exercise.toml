@@ -1,0 +1,9 @@
+title = "Duplicados em O(n)"
+kind = "refactoring"
+grading = "auto"
+difficulty = 2
+required = true
+hints = [
+  "A versão atual compara cada item com todos os outros. Para cada item, o que você precisaria saber para decidir na hora?",
+  "Guarde o que já apareceu numa estrutura em que perguntar \"já vi este?\" custa O(1).",
+]

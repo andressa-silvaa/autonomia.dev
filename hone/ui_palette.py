@@ -1,50 +1,45 @@
 from __future__ import annotations
 
-BRAND_CORAL = "#F0643C"
-COOL_TEAL = "#2A9D8F"
-MUTED_NEUTRAL = "#8C8279"
-MUSTARD_WARNING = "#D9A21B"
-
-RICH_STYLES = {
-    "accent": f"bold {BRAND_CORAL}",
-    "secondary": COOL_TEAL,
-    "muted": MUTED_NEUTRAL,
-    "warning": MUSTARD_WARNING,
-    "title": f"bold {BRAND_CORAL}",
-    "ok": f"bold {COOL_TEAL}",
-    "challenge": f"bold {MUSTARD_WARNING}",
-}
-
 LIGHT_THEME = {
-    "bg": "#F7F2EC",
-    "surface": "#FFFCF8",
-    "text": "#231E1A",
-    "text-muted": "#6E645B",
-    "border": "#E4D9CD",
-    "accent": BRAND_CORAL,
-    "accent-text": "#B8431F",
-    "accent-soft": "#FCE3D9",
-    "secondary": "#1F7A70",
-    "secondary-soft": "#D7EFEB",
-    "warning": "#9A6F06",
-    "warning-soft": "#FBEFCB",
+    "bg": "#F6F5F2",
+    "surface": "#FFFFFF",
+    "sidebar": "#EFEEEA",
+    "nav-active": "#E3E1DB",
+    "editor": "#FBFAF8",
+    "text": "#1C1B19",
+    "text-muted": "#67635C",
+    "border": "#E2E0DA",
+    "border-strong": "#CBC8C0",
+    "accent": "#C4461E",
+    "accent-text": "#B03D17",
+    "accent-soft": "#FAE9E2",
+    "on-accent": "#FFFFFF",
+    "secondary": "#1D7268",
+    "secondary-soft": "#E1F1EE",
+    "warning": "#875F00",
+    "warning-soft": "#FAF0D4",
 }
 
 DARK_THEME = {
-    "bg": "#181513",
-    "surface": "#221E1B",
-    "text": "#F2ECE5",
-    "text-muted": "#A99D92",
-    "border": "#38312B",
-    "accent": "#FF7A52",
-    "accent-text": "#FF8F6B",
-    "accent-soft": "#3F2419",
+    "bg": "#161514",
+    "surface": "#1E1D1B",
+    "sidebar": "#1A1918",
+    "nav-active": "#2B2927",
+    "editor": "#1A1918",
+    "text": "#ECEAE6",
+    "text-muted": "#A09A91",
+    "border": "#2F2D2A",
+    "border-strong": "#45423D",
+    "accent": "#E8673D",
+    "accent-text": "#F08560",
+    "accent-soft": "#3A2118",
+    "on-accent": "#161514",
     "secondary": "#4CC2B2",
-    "secondary-soft": "#17332F",
-    "warning": "#F0C24B",
-    "warning-soft": "#3A2F12",
+    "secondary-soft": "#15302C",
+    "warning": "#E8B84A",
+    "warning-soft": "#332910",
 }
 
-HEADING_FONT = "'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif"
-BODY_FONT = "'Atkinson Hyperlegible', 'Segoe UI', system-ui, sans-serif"
-MONO_FONT = "'JetBrains Mono', 'Cascadia Code', Consolas, monospace"
+HEADING_FONT = "'Source Serif 4', Georgia, 'Times New Roman', serif"
+BODY_FONT = "'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif"
+MONO_FONT = "'IBM Plex Mono', 'Cascadia Code', Consolas, monospace"

@@ -1,0 +1,84 @@
+[track]
+slug = "ai-agents"
+name = "IA e Agentes"
+description = "Usar LLMs como ferramenta de engenharia: prompting, contexto, RAG, tool calling, agentes e avaliação. E saber quando não usar."
+
+[[modules]]
+slug = "how-llms-work"
+title = "Como um LLM funciona"
+summary = "Tokens, contexto, amostragem e por que ele erra com confiança."
+content = "01-how-llms-work.md"
+requires = []
+competencies = ["llm-fundamentals"]
+
+[[modules]]
+slug = "prompting"
+title = "Prompting"
+summary = "Instrução clara, exemplos e iteração: o que muda a resposta de verdade."
+content = "02-prompting.md"
+requires = ["how-llms-work"]
+competencies = ["prompting"]
+
+[[modules]]
+slug = "structured-output"
+title = "Saída estruturada"
+summary = "JSON válido e validado, para o modelo conversar com o seu código."
+content = "03-structured-output.md"
+requires = ["prompting"]
+competencies = ["structured-output"]
+
+[[modules]]
+slug = "context-engineering"
+title = "Context engineering"
+summary = "O que entra na janela de contexto, o que fica de fora e por quê."
+content = "04-context-engineering.md"
+requires = ["prompting"]
+competencies = ["context-engineering"]
+
+[[modules]]
+slug = "embeddings-and-search"
+title = "Embeddings e busca semântica"
+summary = "Vetores, similaridade e busca por significado, não por palavra."
+content = "05-embeddings-and-search.md"
+requires = ["how-llms-work"]
+competencies = ["embeddings-and-search"]
+
+[[modules]]
+slug = "rag"
+title = "RAG"
+summary = "Responder com base nos seus documentos, citando a fonte."
+content = "06-rag.md"
+requires = ["embeddings-and-search", "context-engineering"]
+competencies = ["rag"]
+
+[[modules]]
+slug = "tool-calling"
+title = "Tool calling"
+summary = "Dar ferramentas ao modelo e executar o que ele pede, sem abrir brecha."
+content = "07-tool-calling.md"
+requires = ["structured-output"]
+competencies = ["tool-calling"]
+
+[[modules]]
+slug = "agents"
+title = "Agentes"
+summary = "O laço de agente, seus limites e quando um workflow simples ganha."
+content = "08-agents.md"
+requires = ["tool-calling", "context-engineering"]
+competencies = ["agents"]
+
+[[modules]]
+slug = "evaluation"
+title = "Avaliação"
+summary = "Como saber se a sua mudança no prompt melhorou alguma coisa."
+content = "09-evaluation.md"
+requires = ["structured-output"]
+competencies = ["ai-evaluation"]
+
+[[modules]]
+slug = "when-not-to-use-ai"
+title = "Quando não usar IA"
+summary = "Validar respostas, riscos de segurança e o custo de depender do modelo."
+content = "10-when-not-to-use-ai.md"
+requires = ["agents", "rag", "evaluation"]
+competencies = ["ai-judgment"]

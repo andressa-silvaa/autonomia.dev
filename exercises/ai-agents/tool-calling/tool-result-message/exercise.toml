@@ -1,0 +1,9 @@
+title = "Devolver os resultados do jeito certo"
+kind = "code"
+grading = "auto"
+difficulty = 3
+hints = [
+  "Todos os tool_result de uma rodada vão numa única mensagem de usuário.",
+  "A ferramenta que falhou não some: ela volta com is_error igual a True.",
+  "O conteúdo do tool_result é texto; converta o que a função devolveu com str().",
+]

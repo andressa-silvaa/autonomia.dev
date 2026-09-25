@@ -1,0 +1,10 @@
+title = "Blindar a entrada da ferramenta"
+kind = "code"
+grading = "auto"
+difficulty = 4
+required = true
+hints = [
+  "Resolva o caminho pedido em relação à raiz e verifique se o resultado ainda está dentro dela.",
+  "Path.resolve() normaliza os \"..\" e deixa o caminho real à mostra.",
+  "is_relative_to é a checagem direta de \"este caminho está dentro daquele\".",
+]

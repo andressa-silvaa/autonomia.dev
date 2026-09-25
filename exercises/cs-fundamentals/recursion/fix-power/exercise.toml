@@ -1,0 +1,8 @@
+title = "A potência que nunca para"
+kind = "debug"
+grading = "auto"
+difficulty = 2
+hints = [
+  "Rode power(2, 3) e leia o erro. Quantas vezes a função chamou a si mesma?",
+  "Toda recursão precisa de um caso em que ela para. Quanto vale qualquer número elevado a zero?",
+]

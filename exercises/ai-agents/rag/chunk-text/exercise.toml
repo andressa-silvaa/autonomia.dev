@@ -1,0 +1,10 @@
+title = "Dividir texto em trechos com sobreposição"
+kind = "code"
+grading = "auto"
+difficulty = 3
+required = true
+hints = [
+  "Ande pelo texto com um passo de (size - overlap) caracteres.",
+  "Cuidado com o passo zero ou negativo: se overlap for maior ou igual a size, o laço nunca termina.",
+  "O último trecho pode ser menor que size, e tudo bem.",
+]

@@ -1,0 +1,10 @@
+title = "Um avaliador que não se engana"
+kind = "code"
+grading = "auto"
+difficulty = 3
+required = true
+hints = [
+  "Rode cada caso repetições vezes e conte quantas saídas batem com o esperado.",
+  "A taxa de acerto de um caso é acertos divididos por repetições.",
+  "Um caso instável é aquele que acertou pelo menos uma vez e errou pelo menos uma vez.",
+]

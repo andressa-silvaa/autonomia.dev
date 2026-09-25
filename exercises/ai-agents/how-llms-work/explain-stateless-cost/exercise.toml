@@ -1,0 +1,16 @@
+title = "Por que a conversa longa fica cara"
+kind = "explanation"
+grading = "ollama"
+difficulty = 2
+required = true
+rubric = [
+  "Diz que a API é sem estado e que cada chamada reenvia o histórico inteiro",
+  "Mostra que o custo de entrada cresce a cada turno, porque o histórico acumula",
+  "Reconhece que o crescimento do total acumulado é quadrático no número de turnos",
+  "Cita uma forma concreta de reduzir isso (cache de prompt, resumir, descartar turnos antigos)",
+  "Não confunde tokens de entrada com tokens de saída",
+]
+hints = [
+  "Escreva os tokens de entrada de cada turno: no turno 3 você reenvia os turnos 1 e 2 mais a pergunta nova.",
+  "Some os tokens de entrada de todos os turnos. Se cada turno acrescenta mais ou menos a mesma coisa, o que essa soma parece?",
+]

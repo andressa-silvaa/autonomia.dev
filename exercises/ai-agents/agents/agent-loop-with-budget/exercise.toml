@@ -1,0 +1,10 @@
+title = "Um laço de agente que sabe parar"
+kind = "code"
+grading = "auto"
+difficulty = 4
+required = true
+hints = [
+  "O laço para por três motivos diferentes: o modelo terminou, acabaram as voltas, ou estourou o orçamento.",
+  "Some os tokens de cada resposta antes de decidir se continua.",
+  "Cheque o orçamento depois de contabilizar a volta atual, e antes de pedir a próxima.",
+]

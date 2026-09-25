@@ -1,0 +1,9 @@
+title = "Achatar listas aninhadas"
+kind = "code"
+grading = "auto"
+difficulty = 3
+required = true
+hints = [
+  "Salto de fé: suponha que flatten já funciona para listas menores. Como você usa isso para a lista inteira?",
+  "Para cada item: se for lista, achate e junte o resultado; se não for, só adicione.",
+]

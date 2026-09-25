@@ -3,7 +3,7 @@ from __future__ import annotations
 import sqlite3
 from dataclasses import dataclass
 
-from hone.core.models import AnswerConfidence
+from hone.core.models import AnswerConfidence, ExerciseKind, ExerciseStatus, GradingMethod
 from hone.core.users import UserNotFoundError
 from hone.core.workspace import DatabaseMissingError, SchemaOutdatedError
 from hone.engines.checkins import AlreadyCheckedInError, EmptyIntentionError, Streak
@@ -14,6 +14,13 @@ from hone.engines.diagnostic import (
     NoFinishedDiagnosticError,
     NoOpenDiagnosticError,
     NoQuestionsError,
+    QuestionNotPendingError,
+)
+from hone.engines.exercises import (
+    EmptyAnswerError,
+    ExerciseNotStartedError,
+    NoHintsLeftError,
+    UnknownExerciseError,
 )
 from hone.engines.knowledge import NoGoalError
 from hone.engines.progress import (
@@ -21,15 +28,49 @@ from hone.engines.progress import (
     ModuleLink,
     ModuleLockedError,
     ModuleStatus,
+    RequiredExercisesPendingError,
     UnknownModuleError,
 )
 from hone.engines.sessions import ActiveSessionExistsError, NoActiveSessionError
+from hone.engines.submissions import (
+    SelfAssessmentReason,
+    SelfAssessmentSizeError,
+    WrongAnswerFormatError,
+)
 
 MODULE_STATUS_LABELS = {
     ModuleStatus.LOCKED: "trancado",
     ModuleStatus.AVAILABLE: "disponível",
     ModuleStatus.IN_PROGRESS: "estudando",
     ModuleStatus.COMPLETED: "concluído",
+}
+
+
+EXERCISE_STATUS_LABELS = {
+    ExerciseStatus.NOT_STARTED: "a fazer",
+    ExerciseStatus.STARTED: "em andamento",
+    ExerciseStatus.PASSED: "aprovado",
+}
+
+EXERCISE_KIND_LABELS = {
+    ExerciseKind.QUIZ: "quiz",
+    ExerciseKind.CODE_FROM_SCRATCH: "código",
+    ExerciseKind.COMPLETE_CODE: "completar código",
+    ExerciseKind.DEBUG: "debugging",
+    ExerciseKind.CODE_READING: "leitura de código",
+    ExerciseKind.CODE_REVIEW: "code review",
+    ExerciseKind.REFACTORING: "refatoração",
+    ExerciseKind.OPEN_ANSWER: "resposta aberta",
+    ExerciseKind.CONCEPT_EXPLANATION: "explicação",
+    ExerciseKind.DOCUMENTATION: "documentação",
+    ExerciseKind.PRESENTATION: "apresentação",
+    ExerciseKind.SURPRISE: "surpresa",
+}
+
+GRADING_LABELS = {
+    GradingMethod.AUTOMATED_TESTS: "automática",
+    GradingMethod.LOCAL_AI: "Ollama",
+    GradingMethod.SELF_ASSESSMENT: "autoavaliação",
 }
 
 
@@ -124,7 +165,57 @@ def goal_set_message(title: str) -> str:
 
 
 def goal_reached_message(title: str) -> str:
-    return f"Você já chegou em “{title}”. Escolha o próximo topo com hone goal <módulo>."
+    return f"Você já chegou em “{title}”. Hora de escolher o próximo topo."
+
+
+def exercise_passed_message(title: str, first_pass: bool) -> str:
+    if first_pass:
+        return f"Parabéns! Você venceu “{title}”. Isso agora é seu."
+    return f"Passou de novo em “{title}”. Repetir e acertar também é treino."
+
+
+def exercise_failed_message(attempts_so_far: int) -> str:
+    if attempts_so_far <= 1:
+        return "Ainda não. Leia o que falhou com calma: o erro está te contando alguma coisa."
+    if attempts_so_far < 4:
+        return "Mais uma volta. Cada tentativa deixa o problema um pouco menor."
+    return (
+        "Travou? Normal. Respire, volte ao enunciado, e se precisar, pedir uma dica não é derrota."
+    )
+
+
+def hint_message(number: int, total: int) -> str:
+    return f"Dica {number} de {total}. Ela custa um pouco de XP, mas só um pouco."
+
+
+def xp_earned_message(competency_xp: int, activity_xp: int) -> str:
+    parts = []
+    if competency_xp:
+        parts.append(f"+{competency_xp} XP de competência")
+    if activity_xp:
+        parts.append(f"+{activity_xp} XP de atividade")
+    return " · ".join(parts)
+
+
+def module_ready_message() -> str:
+    return "Os exercícios obrigatórios do módulo estão feitos. Ele já pode ser concluído."
+
+
+def self_assessment_message(reason: SelfAssessmentReason, model: str) -> str:
+    match reason:
+        case SelfAssessmentReason.GRADED_BY_SELF:
+            return "Este é de autoavaliação: compare com a referência e marque cada critério."
+        case SelfAssessmentReason.OLLAMA_UNAVAILABLE:
+            return (
+                "O Ollama não respondeu, então hoje vai de autoavaliação. "
+                "Para correção por IA local, instale o Ollama (veja o README)."
+            )
+        case SelfAssessmentReason.OLLAMA_MODEL_MISSING:
+            return (
+                f"O modelo {model} não está instalado no Ollama, então hoje vai de "
+                f"autoavaliação. Para instalar, rode no terminal: ollama pull {model}"
+            )
+    return "O Ollama respondeu de um jeito inesperado, então hoje vai de autoavaliação."
 
 
 @dataclass(frozen=True, slots=True)
@@ -134,7 +225,7 @@ class Challenge:
 
 
 def _module_list(links: tuple[ModuleLink, ...]) -> str:
-    return ", ".join(f"{link.title} ({link.key})" for link in links)
+    return ", ".join(f"“{link.title}”" for link in links)
 
 
 def _challenge_for_module_error(error: Exception) -> Challenge | None:
@@ -142,7 +233,7 @@ def _challenge_for_module_error(error: Exception) -> Challenge | None:
         case UnknownModuleError():
             return Challenge(
                 f"não achei o módulo “{error.reference}”.",
-                "veja os nomes certinhos com [accent]hone track <trilha>[/accent].",
+                "volte para Trilhas e escolha o módulo por lá.",
             )
         case AmbiguousModuleError():
             return Challenge(
@@ -163,12 +254,12 @@ def _challenge_for_study_error(error: Exception) -> Challenge | None:
             topic = f" em {error.session.module_title}" if error.session.module_title else ""
             return Challenge(
                 f"já tem uma sessão rolando{topic}.",
-                "encerre com [accent]hone session stop[/accent] antes de abrir outra.",
+                "encerre a sessão atual na tela Hoje antes de abrir outra.",
             )
         case NoActiveSessionError():
             return Challenge(
                 "não tem nenhuma sessão aberta agora.",
-                "comece uma com [accent]hone session start[/accent].",
+                "comece uma pela tela Hoje ou pela página de um módulo.",
             )
         case AlreadyCheckedInError():
             return Challenge(
@@ -188,27 +279,73 @@ def _challenge_for_knowledge_error(error: Exception) -> Challenge | None:
         case NoQuestionsError():
             return Challenge(
                 "ainda não tem nenhuma pergunta de diagnóstico no banco.",
-                "rode [accent]hone content sync[/accent] para carregar data/diagnostics/.",
+                "confira data/diagnostics/ e abra o hone de novo para recarregar o conteúdo.",
             )
         case NoOpenDiagnosticError():
             return Challenge(
                 "não tem nenhum diagnóstico em andamento.",
-                "comece um com [accent]hone diagnostic start[/accent].",
+                "comece um pela aba Mapa.",
             )
         case DiagnosticIncompleteError():
             return Challenge(
                 f"ainda faltam {error.remaining} pergunta(s) no diagnóstico.",
-                "continue com [accent]hone diagnostic start[/accent].",
+                "continue respondendo na aba Mapa.",
             )
         case NoFinishedDiagnosticError():
             return Challenge(
                 "você ainda não terminou nenhum diagnóstico.",
-                "faça o primeiro com [accent]hone diagnostic start[/accent].",
+                "faça o primeiro pela aba Mapa.",
+            )
+        case QuestionNotPendingError():
+            return Challenge(
+                "essa pergunta já foi respondida (talvez em outra aba).",
+                "recarregue a página para ver a próxima.",
             )
         case NoGoalError():
             return Challenge(
                 "você ainda não escolheu um objetivo.",
-                "escolha um módulo que quer alcançar: [accent]hone goal <módulo>[/accent].",
+                "escolha na aba Mapa o módulo que você quer alcançar.",
+            )
+    return None
+
+
+def _challenge_for_exercise_error(error: Exception) -> Challenge | None:
+    match error:
+        case UnknownExerciseError():
+            return Challenge(
+                f"não achei o exercício “{error.reference}”.",
+                "volte para a página do módulo e escolha um exercício da lista.",
+            )
+        case ExerciseNotStartedError():
+            return Challenge(
+                f"“{error.exercise.title}” ainda não foi aberto.",
+                "abra o exercício pela página do módulo.",
+            )
+        case EmptyAnswerError():
+            return Challenge(
+                "a resposta ainda está em branco.",
+                "escreva a sua resposta e envie de novo.",
+            )
+        case WrongAnswerFormatError():
+            return Challenge(
+                f"a resposta enviada não combina com o tipo de “{error.exercise.title}”.",
+                "recarregue a página do exercício e tente de novo.",
+            )
+        case SelfAssessmentSizeError():
+            return Challenge(
+                "a autoavaliação veio incompleta.",
+                "marque sim ou não em todos os critérios.",
+            )
+        case NoHintsLeftError():
+            return Challenge(
+                f"as dicas de “{error.exercise.title}” acabaram.",
+                "agora é com você, e você tem mais do que imagina.",
+            )
+        case RequiredExercisesPendingError():
+            pending = ", ".join(f"“{title}”" for title in error.pending_titles)
+            return Challenge(
+                f"“{error.module.title}” ainda tem exercício obrigatório pendente: {pending}.",
+                "os exercícios estão na página do módulo.",
             )
     return None
 
@@ -218,28 +355,28 @@ def _challenge_for_setup_error(error: Exception) -> Challenge | None:
         case DatabaseMissingError():
             return Challenge(
                 f"ainda não existe banco em {error.db_path}.",
-                "rode [accent]hone db init[/accent].",
+                "feche o hone e abra de novo: ele cria o banco sozinho.",
             )
         case SchemaOutdatedError():
             return Challenge(
                 f"o banco está na versão {error.current}, e o código já espera a {error.latest}.",
-                "rode [accent]hone db init[/accent] para atualizar (seus dados continuam lá).",
+                "feche o hone e abra de novo para atualizar (seus dados continuam lá).",
             )
         case UserNotFoundError():
             return Challenge(
                 "o banco existe, mas ninguém está cadastrado nele.",
-                "rode [accent]hone db init[/accent].",
+                "feche o hone e abra de novo.",
             )
         case ContentError():
             return Challenge(
                 "o conteúdo das trilhas tem problemas:\n"
                 + "\n".join(f"  - {p}" for p in error.problems),
-                "corrija os arquivos em data/ e rode [accent]hone content sync[/accent] de novo.",
+                "corrija os arquivos citados e abra o hone de novo.",
             )
         case ContentFileMissingError():
             return Challenge(
                 "o arquivo de conteúdo desse módulo sumiu.",
-                "confira data/tracks/ e rode [accent]hone content sync[/accent].",
+                "confira data/tracks/ e abra o hone de novo.",
             )
         case sqlite3.Error() | OSError():
             return Challenge(
@@ -254,6 +391,7 @@ def challenge_for(error: Exception) -> Challenge | None:
         _challenge_for_module_error,
         _challenge_for_study_error,
         _challenge_for_knowledge_error,
+        _challenge_for_exercise_error,
         _challenge_for_setup_error,
     ):
         challenge = describe(error)

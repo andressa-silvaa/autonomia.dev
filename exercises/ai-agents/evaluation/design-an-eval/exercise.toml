@@ -1,0 +1,16 @@
+title = "Desenhar a avaliação de um classificador"
+kind = "explanation"
+grading = "ollama"
+difficulty = 3
+rubric = [
+  "Propõe casos vindos de dados reais, não inventados, e diz de onde tirá-los",
+  "Escolhe verificação programática para as categorias, e justifica por ser determinística e barata",
+  "Separa conjunto de desenvolvimento e conjunto de teste, explicando o risco de ajustar olhando o mesmo conjunto que mede",
+  "Trata a variação entre execuções, rodando mais de uma vez e olhando taxa em vez de caso isolado",
+  "Inclui custo ou latência como critério de decisão, além da qualidade",
+  "Cita um caso limite concreto que precisa estar no conjunto (mensagem ambígua, vazia, fora do escopo ou em outro idioma)",
+]
+hints = [
+  "Comece pela pergunta: como eu vou saber, semana que vem, se a mudança no prompt melhorou ou piorou?",
+  "Pense em quatro decisões: de onde vêm os casos, como se corrige, como se separa dev e teste, e quantas vezes se roda.",
+]

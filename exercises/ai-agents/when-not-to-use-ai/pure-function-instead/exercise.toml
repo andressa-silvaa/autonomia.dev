@@ -1,0 +1,10 @@
+title = "O caso em que LLM é a ferramenta errada"
+kind = "code"
+grading = "auto"
+difficulty = 2
+required = true
+hints = [
+  "Dinheiro em float acumula erro de arredondamento; trabalhe em centavos com inteiros.",
+  "Aplique o desconto antes do imposto, como diz o enunciado, e arredonde só no fim.",
+  "round() do Python usa arredondamento bancário; para centavos, some 0.5 e trunque, ou use Decimal.",
+]

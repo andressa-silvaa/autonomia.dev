@@ -1,0 +1,16 @@
+title = "Reescrever um prompt vago"
+kind = "explanation"
+grading = "ollama"
+difficulty = 2
+required = true
+rubric = [
+  "Entrega um prompt reescrito, completo, pronto para usar",
+  "Define a tarefa de forma específica, sem ambiguidade sobre o que analisar",
+  "Especifica o formato exato da saída esperada",
+  "Diz o que o modelo deve fazer quando não tiver informação suficiente",
+  "Explica quais mudanças foram feitas e por que cada uma melhora o resultado",
+]
+hints = [
+  "Pergunte-se: se você desse esse prompt para uma pessoa recém-chegada ao time, o que ela precisaria perguntar de volta antes de começar?",
+  "Três eixos costumam resolver: o que é a tarefa, qual o formato da resposta, e o que fazer em caso de dúvida.",
+]

@@ -1,0 +1,8 @@
+title = "Agrupar anagramas"
+kind = "code"
+grading = "auto"
+difficulty = 3
+hints = [
+  "Duas palavras são anagramas quando têm as mesmas letras. Que chave seria igual para as duas?",
+  "Ordenar as letras da palavra dá uma chave ótima: \"roma\" e \"amor\" viram \"amor\".",
+]
